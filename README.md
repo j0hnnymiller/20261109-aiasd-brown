@@ -88,7 +88,7 @@ This repository contains an approved product requirements specification for a ta
 - [Task Manager Web App Requirements](task-manager-requirements.md)
 - [Task Manager MVP Project Plan](task-manager-mvp-plan.md)
 - [Task Manager Implementation Plan: Vertical Slices](task-manager-implementation-plan.md)
-- [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Ready for technical review after resolving Slice 1 decisions; implementation approval and authorization remain separate.
+- [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Approved by the requester; implementation authorization remains separate.
 - [Task Manager MVP Architecture Specification](task-manager-architecture.md) - Requester-approved hosted architecture with React/TypeScript, ASP.NET Core, and PostgreSQL; hosting and explicit open decisions remain unresolved.
 - [React and TypeScript Instructions](.github/instructions/react-typescript.instructions.md) - Frontend guidance for typed, accessible UI and explicit server refresh behavior.
 - [ASP.NET Core Instructions](.github/instructions/aspnet-core.instructions.md) - Backend guidance for modular boundaries, device authorization, workspace isolation, and explicit errors.
