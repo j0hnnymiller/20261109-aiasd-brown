@@ -2,3 +2,10 @@
 **/obj/**
 **/dist/**
 **/node_modules/**
+.env
+**/.env
+**/.env.*
+!**/.env.example
+**/.certs/**
+**/test-results/**
+**/playwright-report/**
