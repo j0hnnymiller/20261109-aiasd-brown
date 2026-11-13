@@ -15,6 +15,20 @@ task_durations:
 total_duration: "00:07:05"
 ai_log: "ai-logs/2026/11/12/5d5e4cc3-6034-4b34-9193-397eba0fac7a/conversation.md"
 source: "user request"
+revisions:
+  - chat_id: "5d5e4cc3-6034-4b34-9193-397eba0fac7a"
+    model: "unknown/unknown@unknown"
+    operator: "johnmillerATcodemag-com"
+    prompt: "help me complete milestone 1"
+    started: "2026-11-12T20:04:13-08:00"
+    ended: "2026-11-12T20:06:33-08:00"
+    task_durations:
+      - task: "Confirming and recording Product Readiness decisions"
+        duration: "00:02:20"
+    total_duration: "00:02:20"
+    source: "user request and decision-form responses"
+    change: "Aligned account expectations, ownership, and measures with accepted Milestone 1 decisions."
+    ai_log: "ai-logs/2026/11/12/5d5e4cc3-6034-4b34-9193-397eba0fac7a/conversation.md"
 ---
 
 # Task Manager Web App Requirements
@@ -24,7 +38,7 @@ source: "user request"
 
 ## Objective and Context
 
-Define the product behavior for a task manager web app that helps individuals capture, organize, and follow through on tasks. The requester has clarified the initial audience and several product choices. No research, user interviews, or measured business baselines were supplied, so success measures remain proposed.
+Define the product behavior for a task manager web app that helps individuals capture, organize, and follow through on tasks. The requester has confirmed the product decisions and measurement approach below. No research, user interviews, or measured business baselines were supplied; the approved pilot will establish baselines.
 
 ## Problem
 
@@ -47,6 +61,9 @@ People need a dependable way to keep track of their work, decide what needs atte
 - Named lists are sufficient for organizing tasks in the initial scope.
 - Due dates are calendar dates only, with no time of day.
 - Reminders and recurring tasks should be considered for a later release; they are not included in the proposed first release.
+- Each individual has a private task space; no account is required to use the MVP.
+- Account-specific closure and data-removal questions are deferred outside the account-free MVP. TM-09 individual task removal remains included; no broader deletion or retention behavior is assumed.
+- The requester is the Product Owner and Release Decision Owner.
 
 ## Scope
 
@@ -74,11 +91,13 @@ The requirements and proposed first-release grouping below are approved as produ
 
 ## Success Measures
 
-The following are proposed product measures. Baselines, targets, collection approach, and review period must be agreed before they are used to judge success.
+The requester approved a 30-day limited pilot, participant walkthroughs, and a short survey to collect these baseline measures:
 
-- Percentage of users who create at least one task during an agreed initial-use period.
-- Percentage of tasks marked complete by their due date, among tasks that have a due date.
-- User-reported confidence in keeping track of personal commitments.
+- Percentage of pilot participants who create at least one task within 7 days of first use.
+- Percentage of tasks completed on or before their calendar due date, among tasks with due dates falling within the pilot period.
+- Confidence in keeping track of personal commitments, rated from 1 (not confident) to 5 (very confident) using the same question at pilot start and end.
+
+Numeric targets will be set after reviewing pilot baselines. They are excluded from release decisions until separately approved. The [MVP plan](task-manager-mvp-plan.md#success-measures) records the approved collection approach. No pilot start date is set.
 
 ## Non-Goals
 
@@ -91,16 +110,17 @@ The following are proposed product measures. Baselines, targets, collection appr
 ## Risks and Dependencies
 
 - Reminder and recurrence behaviors have not been defined; treating them as later-release candidates avoids adding unconfirmed behavior to the first release.
-- No baseline or target has been provided for the proposed success measures.
+- Baselines will be collected during the approved pilot; numeric targets remain deferred until baseline review.
+- Adding account-related scope would require the Product Owner to resolve the deferred account closure and data-removal expectations.
 
 ## Open Questions
 
 | Question                                                                                         | Decision owner            | Status |
 | ------------------------------------------------------------------------------------------------ | ------------------------- | ------ |
-| Which reminder behaviors and recurring-task patterns should be considered for a later release?   | Product owner to identify | Open   |
-| What initial-use period, baseline, and targets should be used for the proposed success measures? | Product owner to identify | Open   |
-| What user/account and data-handling expectations should shape a later product decision?          | Product owner to identify | Open   |
+| Which reminder behaviors and recurring-task patterns should be considered for a later release?   | Requester / Product Owner | Deferred outside MVP |
+| What numeric targets should follow the pilot baselines?                                          | Requester / Product Owner | Deferred until baseline review; not a release gate |
+| What account closure and account-level data-removal behavior should apply if accounts are added? | Requester / Product Owner | Deferred outside the account-free MVP |
 
 ## Review and Approval
 
-**Approval:** The requester approved this specification on 2026-11-12. The requester's organizational role was not provided. This approval applies to the product requirements and does not by itself authorize implementation.
+**Approval:** The requester approved this specification on 2026-11-12 and subsequently confirmed the Milestone 1 product decisions, measurement approach, and explicit deferrals. The requester designated themselves Product Owner and Release Decision Owner and accepted Milestone 1 as complete. These approvals do not by themselves authorize implementation.
