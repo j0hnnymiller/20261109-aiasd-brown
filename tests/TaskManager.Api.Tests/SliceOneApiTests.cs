@@ -41,7 +41,9 @@ public sealed class SliceOneApiTests
 
         var secondResponse = await PostWorkspaceAsync(client, csrf, request);
         Assert.Equal(HttpStatusCode.Created, secondResponse.StatusCode);
-        Assert.Equal(cookie.Split(';')[0], ReadCookie(secondResponse, "__Host-device").Split(';')[0]);
+        var firstCookieBytes = Encoding.UTF8.GetBytes(cookie.Split(';')[0]);
+        var secondCookieBytes = Encoding.UTF8.GetBytes(ReadCookie(secondResponse, "__Host-device").Split(';')[0]);
+        Assert.True(CryptographicOperations.FixedTimeEquals(firstCookieBytes, secondCookieBytes));
 
         var result = await secondResponse.Content.ReadFromJsonAsync<WorkspaceCreatedResponse>(JsonOptions);
         Assert.NotNull(result);
@@ -59,8 +61,8 @@ public sealed class SliceOneApiTests
         var recovery = await database.RecoveryCredentials.SingleAsync(item => item.WorkspaceId == workspace.Id);
         Assert.Equal(Hash(request.DeviceCredential!), device.Verifier);
         Assert.Equal(Hash(request.RecoverySecret!), recovery.Verifier);
-        Assert.DoesNotContain(request.DeviceCredential!, device.Verifier);
-        Assert.DoesNotContain(request.RecoverySecret!, recovery.Verifier);
+        Assert.False(device.Verifier.Contains(request.DeviceCredential!, StringComparison.Ordinal));
+        Assert.False(recovery.Verifier.Contains(request.RecoverySecret!, StringComparison.Ordinal));
         Assert.Single(await database.WorkspaceCreationOperations.Where(item => item.WorkspaceId == workspace.Id).ToListAsync());
     }
 
@@ -146,6 +148,10 @@ public sealed class SliceOneApiTests
 
         Assert.Equal(HttpStatusCode.Created,
             (await PostTaskAsync(client, csrf, first.DeviceCredential, RandomToken(), request)).StatusCode);
+        var workspace = await GetWorkspaceAsync(client, first.DeviceCredential);
+        var workspaceInfo = await workspace.Content.ReadFromJsonAsync<WorkspaceInfoResponse>(JsonOptions);
+        Assert.Equal(HttpStatusCode.OK, workspace.StatusCode);
+        Assert.Equal("Etc/UTC", workspaceInfo?.TimeZoneId);
         Assert.Empty(await ReadTasksAsync(client, second.DeviceCredential));
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/tasks")).StatusCode);
     }
@@ -252,6 +258,13 @@ public sealed class SliceOneApiTests
     private static async Task<HttpResponseMessage> GetTasksAsync(HttpClient client, string deviceCredential)
     {
         using var message = new HttpRequestMessage(HttpMethod.Get, "/api/tasks");
+        message.Headers.Add("Cookie", $"__Host-device={deviceCredential}");
+        return await client.SendAsync(message);
+    }
+
+    private static async Task<HttpResponseMessage> GetWorkspaceAsync(HttpClient client, string deviceCredential)
+    {
+        using var message = new HttpRequestMessage(HttpMethod.Get, "/api/workspace");
         message.Headers.Add("Cookie", $"__Host-device={deviceCredential}");
         return await client.SendAsync(message);
     }

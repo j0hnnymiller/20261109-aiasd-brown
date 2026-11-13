@@ -11,4 +11,6 @@ public sealed record WorkspaceCreatedResponse(
     string TimeZoneId,
     string DefaultListName);
 
+public sealed record WorkspaceInfoResponse(Guid WorkspaceId, string TimeZoneId);
+
 public sealed record CsrfResponse(string Token);

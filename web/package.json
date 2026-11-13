@@ -1,10 +1,14 @@
 {
-  "name": "web",
+  "name": "task-manager-web",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "dev": "vite",
+    "lint": "eslint . --max-warnings=0",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "test:e2e": "node scripts/e2e-preflight.mjs && node scripts/run-e2e.mjs"
   },
   "keywords": [],
   "author": "",
@@ -35,5 +39,10 @@
       "minimatch": "11.0.8"
     },
     "minimatch": "11.0.8"
-  }
+  },
+  "private": "true",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "type": "module"
 }

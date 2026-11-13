@@ -49,6 +49,7 @@ using (var scope = app.Services.CreateScope())
 app.MapGet("/health/live", () => Results.Ok(new { status = "ok" }));
 app.MapGet("/api/time-zones", TimeZoneEndpoints.GetSupportedTimeZones);
 app.MapGet("/api/security/csrf", CsrfEndpoints.Issue);
+app.MapGet("/api/workspace", WorkspaceEndpoints.Read);
 app.MapPost("/api/workspaces", WorkspaceEndpoints.Create);
 app.MapGet("/api/tasks", TaskEndpoints.Read);
 app.MapPost("/api/tasks", TaskEndpoints.Create);

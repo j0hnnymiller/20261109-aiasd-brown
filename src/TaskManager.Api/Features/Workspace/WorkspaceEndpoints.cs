@@ -8,6 +8,28 @@ public static class WorkspaceEndpoints
 {
     private static readonly TimeSpan DeviceLifetime = TimeSpan.FromDays(90);
 
+    public static async Task<IResult> Read(
+        HttpContext context,
+        TaskManagerDbContext database,
+        DeviceAuthorization authorization,
+        CancellationToken cancellationToken)
+    {
+        var workspaceId = await authorization.GetWorkspaceIdAsync(context, cancellationToken);
+        if (workspaceId is null)
+        {
+            return Results.Problem(statusCode: StatusCodes.Status401Unauthorized, title: "A valid device is required.");
+        }
+
+        var workspace = await database.Workspaces
+            .AsNoTracking()
+            .Where(item => item.Id == workspaceId.Value)
+            .Select(item => new WorkspaceInfoResponse(item.Id, item.TimeZoneId))
+            .SingleOrDefaultAsync(cancellationToken);
+        return workspace is null
+            ? Results.Problem(statusCode: StatusCodes.Status401Unauthorized, title: "A valid device is required.")
+            : Results.Ok(workspace);
+    }
+
     public static async Task<IResult> Create(
         WorkspaceCreateRequest request,
         HttpContext context,
