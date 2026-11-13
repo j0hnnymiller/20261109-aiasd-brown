@@ -79,6 +79,19 @@ revisions:
     ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
     source: "user request and six decision-form responses"
     change: "Resolved product, access, calendar, retention and pilot ownership decisions; retained explicit stack/hosting/operational deferrals."
+  - chat_id: "7c5afae0-9dc2-465f-a19e-58cc8812f033"
+    model: "OpenAI/gpt-6.1-sol@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "help me choose a tech stack"
+    started: "2026-11-12T21:00:33-08:00"
+    ended: "2026-11-12T21:00:37-08:00"
+    task_durations:
+      - task: "Recording selected application stack"
+        duration: "00:00:04"
+    total_duration: "00:00:04"
+    ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
+    source: "user request and stack-selection form"
+    change: "Recorded requester selection of React/TypeScript, ASP.NET Core, and PostgreSQL; retained hosting and implementation decisions as open."
 ---
 
 # Task Manager MVP Architecture Specification
@@ -457,18 +470,31 @@ Begin with a single backend instance and workspace-scoped indexes. Measure befor
 
 The relational database is the initial scaling constraint. Use query measurements to select indexes and pagination rather than adding a search service or cache speculatively. Workload size, concurrent device count, response-time targets, and load-test thresholds are deferred; the pilot has no numerical uptime SLA.
 
-## 10. Technology Recommendations
+## 10. Technology Selection
 
-The requester explicitly deferred application stack selection. Hosting remains undecided pending cost comparison. No programming language, frontend framework, database engine, cloud, or vendor is selected; no additional team/organizational constraints were supplied.
+On 2026-11-12 the requester selected the following stack after reporting experience with C#/ASP.NET Core, TypeScript/Node.js, React, and PostgreSQL, a preference for a React single-page interface, and simplicity/maintainability as the primary criterion.
 
-| Area | Required capability / selection criteria |
+| Area | Selected technology | Architectural role |
+| --- | --- | --- |
+| Browser interface | React and TypeScript | Responsive single-page UI with accessible forms, draft preservation, and explicit refresh/error states. |
+| Backend | C# and ASP.NET Core | Single modular web application/API; authentication, authorization, validation, feature logic, and secure same-origin delivery. |
+| Relational database | PostgreSQL | Authoritative workspace data, transactional updates, foreign keys, conditional writes, and workspace-scoped queries. |
+
+These are technology selections, not evidence that the required behavior is already implemented. Use an opaque, revocable per-device credential with server-side checks as specified in Section 8; a React interface or framework-provided cookie feature does not replace those checks. Keep the deletion ledger independent of database restoration and reconcile access state before a restore becomes available.
+
+### Options and trade-offs
+
+| Candidate | Fit and trade-off |
 | --- | --- |
-| Browser interface | Responsive UI, accessible forms, visibility/focus handling, draft preservation, and explicit failure states. |
-| Backend framework | Maintained security middleware, cookie authentication, request validation, transaction support, and automated testing. |
-| Relational database | Transactions, foreign keys, atomic conditional updates, suitable indexing, and backup/restore support. |
-| Hosting | HTTPS, secret management, health checks, protected database connectivity, sanitized logs, and controlled deployments. |
+| **React/TypeScript + ASP.NET Core + PostgreSQL** | Selected. Matches the requester's experience and preferred UI; supports a single backend and transactional relational model. Requires C# and TypeScript toolchains. |
+| React/TypeScript + Node.js/Fastify + PostgreSQL | Considered. Uses TypeScript across frontend and backend; requires the team to select and integrate backend components. Not selected. |
+| ASP.NET Core server-rendered pages + PostgreSQL | Considered. A simpler frontend toolchain is possible, but it does not match the requester's stated preference for a React interface. |
 
-Choose a supported stack based on team proficiency, operating constraints, and measured cost estimates. Specific runtime versions, provider capabilities, and pricing require separate verification.
+No measured performance or cost comparison has been supplied. All candidates require proof of workspace isolation, pairing/recovery, atomic conflict handling, deletion-ledger restoration, and accessible UI behavior. None removes those responsibilities or guarantees compliance.
+
+### Remaining technology choices
+
+Hosting remains undecided pending cost comparison. Exact runtime/framework/database versions, data-access and migration libraries, frontend build tooling, test frameworks, deployment packaging, and database provider are not selected. Verify supported versions and provider capabilities at implementation planning time. Compare total pilot costs, including compute, database, backup, independent ledger storage, monitoring, and operations; approve an estimate before provisioning.
 
 ## 11. Alternatives and Trade-offs
 
@@ -487,7 +513,7 @@ These are proposed end-to-end implementation increments, not scheduled commitmen
 
 | Increment | Prerequisites | Scope and validation gate |
 | --- | --- | --- |
-| 1. Private workspace and first task | Stack and minimum access-policy choices resolved. | Create a workspace and task, persist it, reload it; verify title validation, access isolation, and explicit failure handling. Covers initial TM-01. |
+| 1. Private workspace and first task | Selected stack; minimum access-policy and implementation details resolved. | Create a workspace and task, persist it, reload it; verify title validation, access isolation, and explicit failure handling. Covers initial TM-01. |
 | 2. Cross-device access and recovery | Increment 1. | Pair a second device into the same workspace; reject expired/replayed grants; revoke a device; recover with the secret; exercise rotation and unauthorized-access failures. |
 | 3. Capture and organize | Increment 1. | Complete TM-01, TM-03, TM-05 using the approved required/default list and priority rules, with atomic task moves and scoped validation. |
 | 4. Find, act, and refresh | Increments 2-3. | Complete TM-02, TM-04, TM-06 through TM-09; verify title-only search, ordering, refresh triggers, conflicts, live removals, and workspace-zone date boundaries across devices. |
@@ -519,7 +545,7 @@ Every increment includes automated unit/integration/UI tests appropriate to its 
 
 | Open decision | Evidence or decision needed |
 | --- | --- |
-| Application stack | Explicitly deferred by requester; choose before implementation specifications can be finalized. No preferred stack was approved. |
+| Stack versions and libraries | React/TypeScript, ASP.NET Core, and PostgreSQL are selected; choose supported versions, data access, migrations, frontend tooling, and test libraries before finalizing implementation specifications. |
 | Hosting and budget | Cost comparison pending; approve a cost estimate before provisioning. No provider, region, SKU, or monthly budget selected. |
 | Workload and performance | Establish participant/device/task counts before load testing; choose numeric performance targets after workload and environment are known. |
 | Disaster-recovery objectives | Set RPO/RTO after hosting selection; validate with a restore exercise before pilot launch. |
@@ -530,5 +556,7 @@ Every increment includes automated unit/integration/UI tests appropriate to its 
 ### Resolved decision groups
 
 On 2026-11-12, the requester confirmed the task/list rules in Section 4, pairing/device lifetimes and revoke-and-rotate recovery in Section 5, workspace time zone and snapshot completion evidence in Section 6, and deletion/backup/inactivity rules in Sections 4 and 9. The requester also accepted best-effort pilot availability and took pilot operations/support ownership. These are decisions, not measured or implemented outcomes.
+
+The requester subsequently selected React/TypeScript, ASP.NET Core, and PostgreSQL. Hosting, exact versions, libraries, and deployment costs remain open.
 
 The requester remains Product Owner and Release Decision Owner and now owns pilot operations/support. Technical implementation ownership remains unassigned. Architecture approval and these decisions are separate from permission to implement. Resolve the relevant remaining decisions and create bounded implementation specifications before development.

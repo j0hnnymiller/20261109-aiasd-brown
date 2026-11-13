@@ -27,6 +27,19 @@ revisions:
     ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
     source: "user decision-form responses"
     change: "Added the confirmed product/access/retention decisions and explicit remaining deferrals."
+  - chat_id: "7c5afae0-9dc2-465f-a19e-58cc8812f033"
+    model: "OpenAI/gpt-6.1-sol@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "help me choose a tech stack"
+    started: "2026-11-12T21:00:33-08:00"
+    ended: "2026-11-12T21:00:37-08:00"
+    task_durations:
+      - task: "Summarizing stack selection"
+        duration: "00:00:04"
+    total_duration: "00:00:04"
+    ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
+    source: "user stack-selection form"
+    change: "Summarized the selected stack and retained hosting and operational deferrals."
 ---
 
 # Welcome
@@ -35,9 +48,9 @@ This repository contains an approved product requirements specification for a ta
 
 - [Task Manager Web App Requirements](task-manager-requirements.md)
 - [Task Manager MVP Project Plan](task-manager-mvp-plan.md)
-- [Task Manager MVP Architecture Specification](task-manager-architecture.md) - Requester-approved hosted architecture covering cross-device access, device pairing and recovery, and refresh-on-use behavior; stack selection and explicit open decisions remain unresolved.
+- [Task Manager MVP Architecture Specification](task-manager-architecture.md) - Requester-approved hosted architecture with React/TypeScript, ASP.NET Core, and PostgreSQL; hosting and explicit open decisions remain unresolved.
 - [Architecture Design Skill](.github/skills/architecture-design/SKILL.md) - Requirements-grounded architecture workflow with semantically colored Mermaid diagrams and data flow diagrams for principal data exchanges.
 
 Milestone 1 (Product Readiness) is accepted. The MVP has private individual task spaces with no required accounts. The requester owns product acceptance and release decisions; the plan records the approved pilot measures and deferred account-specific questions.
 
-Follow-up decisions define task/list rules, 10-minute pairing, 90-day device access, revoke-and-rotate recovery, a shared configurable time zone, snapshot pilot measurement, and immediate live task deletion with 30-day backup retention. The requester owns best-effort pilot operations/support. Stack, hosting, budget, workload, performance targets, recovery objectives, and numeric abuse limits remain deferred; implementation is not authorized by these decisions.
+Follow-up decisions define task/list rules, 10-minute pairing, 90-day device access, revoke-and-rotate recovery, a shared configurable time zone, snapshot pilot measurement, and immediate live task deletion with 30-day backup retention. The requester owns best-effort pilot operations/support. Hosting, budget, workload, performance targets, recovery objectives, and numeric abuse limits remain deferred; implementation is not authorized by these decisions.

@@ -40,6 +40,19 @@ revisions:
     source: "user request and six decision-form responses"
     change: "Applied approved task/access/calendar refinements to acceptance, pilot measurement and delivery dependencies without inventing estimates."
     ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
+  - chat_id: "7c5afae0-9dc2-465f-a19e-58cc8812f033"
+    model: "OpenAI/gpt-6.1-sol@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "help me choose a tech stack"
+    started: "2026-11-12T21:00:33-08:00"
+    ended: "2026-11-12T21:00:37-08:00"
+    task_durations:
+      - task: "Aligning plan with stack selection"
+        duration: "00:00:04"
+    total_duration: "00:00:04"
+    source: "user stack-selection form"
+    change: "Linked the selected stack decision in the architecture while retaining other deferrals."
+    ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
 ---
 
 # Task Manager MVP Project Plan
@@ -65,7 +78,7 @@ On 2026-11-12 the requester approved the [architecture](task-manager-architectur
 
 List removal and whole-task-space deletion are deferred. No automatic inactive-task-space deletion runs during the pilot; review this before broader release. Backups expire within 30 days, and deleted tasks must not reappear on restoration.
 
-The requester owns pilot operations and support, with best-effort availability and no numerical uptime SLA. Stack, hosting, budget, workload, performance targets, recovery objectives, and numeric abuse limits remain deferred as described in the architecture. This introduces access/time-zone acceptance work; effort and schedule impact cannot be estimated from the supplied context. The accepted Milestone 1 history below is preserved; these are later refinements, not retroactive Milestone 1 decisions.
+The requester owns pilot operations and support, with best-effort availability and no numerical uptime SLA. The application stack was subsequently selected in the architecture; hosting, budget, workload, performance targets, recovery objectives, and numeric abuse limits remain deferred. This introduces access/time-zone acceptance work; effort and schedule impact cannot be estimated from the supplied context. The accepted Milestone 1 history below is preserved; these are later refinements, not retroactive Milestone 1 decisions.
 
 ## Delivery Sequence
 

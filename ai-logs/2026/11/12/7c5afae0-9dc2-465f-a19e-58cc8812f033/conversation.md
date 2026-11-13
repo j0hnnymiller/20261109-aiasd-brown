@@ -148,3 +148,17 @@ Six structured decision forms supplied the following requester choices. Form-res
 | Operations | Pilot workload TBD before load testing; numeric performance targets deferred until load/environment are known; recovery objectives deferred until hosting selection; best-effort pilot availability without numerical SLA; budget TBD with cost approval before provisioning; requester owns pilot operations/support; endpoint-specific rate limits approved with numbers deferred until load/hosting are known and tested before pilot launch. |
 
 Assistant work summary: Updated the approved architecture and its affected data flows, added a restore/deletion-ledger data flow, and aligned nontechnical product requirements and delivery acceptance. Added TM-10 through TM-13 to trace the already approved cross-device/access/time-zone scope. Kept stack, hosting, budget, load, numeric targets, and implementation authorization explicitly unresolved; flagged recovery-response loss and access-state rollback as implementation-specification hazards rather than inventing approved behavior. Seven diagrams rendered in light and dark themes. VS Code visual inspection was not performed.
+
+## Technology Stack Selection
+
+[2026-11-12T20:58:10.808-08:00] User
+
+```text
+help me choose a tech stack
+```
+
+Requester form responses: experience with C#/ASP.NET Core, TypeScript/Node.js, React, and PostgreSQL; preference for a React single-page interface; simplicity and maintainability as the leading criterion.
+
+The assistant recommended React/TypeScript with ASP.NET Core and PostgreSQL, and compared it with React/TypeScript plus Node.js/Fastify and PostgreSQL. The requester selected option 1, the recommended React/TypeScript, ASP.NET Core, and PostgreSQL stack. The response timestamp was not exposed.
+
+Assistant work summary: Recorded the selected stack, rationale, alternatives, and remaining version/library/provider/cost decisions in the architecture. Synchronized the plan and README; no implementation or provisioning was authorized.

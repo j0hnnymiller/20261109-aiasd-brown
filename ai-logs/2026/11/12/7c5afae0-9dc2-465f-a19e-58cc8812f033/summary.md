@@ -46,7 +46,7 @@ Document an MVP architecture for private cross-device task access without requir
 - Preserve the product requirements' nontechnical scope; align product acceptance and the MVP plan with confirmed follow-up decisions.
 - Task/list rules, 10-minute pairing, 90-day device access, revoke-and-rotate recovery, workspace time zone, snapshot completion evidence, immediate live deletion, 30-day backup retention with restore safeguards, and best-effort pilot availability are confirmed.
 - List removal, whole-workspace deletion, and automatic inactive-workspace cleanup during the pilot are excluded/deferred. The requester owns pilot operations/support.
-- No programming stack, hosting provider, budget, numeric performance/recovery targets, workload, or numeric abuse threshold was selected. Implementation remains unauthorized.
+- The requester selected React/TypeScript, ASP.NET Core, and PostgreSQL after evaluating alternatives. Hosting provider, budget, exact versions/libraries, numeric performance/recovery targets, workload, and numeric abuse thresholds remain unselected. Implementation remains unauthorized.
 
 ## Decision-Resolution Follow-up
 
@@ -56,7 +56,7 @@ Document an MVP architecture for private cross-device task access without requir
 
 ## Next Steps
 
-- Select the deferred stack and compare hosting costs; approve a cost estimate before provisioning.
+- Choose supported versions and libraries, compare hosting costs, and approve a cost estimate before provisioning.
 - Establish pilot load and numeric performance, recovery, and abuse-limit settings at the agreed dependencies.
 - Define safe recovery-response loss handling and access-state reconciliation during restore; document operational procedures and validate restoration.
 - Prepare bounded implementation specifications and obtain implementation authorization before development.
