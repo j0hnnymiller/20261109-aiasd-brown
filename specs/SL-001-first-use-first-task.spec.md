@@ -16,7 +16,7 @@ revisions:
   - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
     model: "unknown/unknown@unknown"
     date: "2026-11-13"
-    change: "Added review-driven failure/lifecycle checks and CI handoff requirements for a replacement implementation from main."
+    change: "Added review-driven failure/lifecycle checks and CI handoff requirements; recorded replacement implementation authorization and Copilot ownership in issue 2."
     ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
     model: "unknown/unknown@unknown"
@@ -49,9 +49,9 @@ revisions:
 # SL-001: First Use and First Task
 
 - **Status:** Approved by requester on 2026-11-12
-- **Owner/reviewer:** Requester as Product Owner, Release Decision Owner, and technical reviewer; implementation owner unassigned
-- **Implementation authorization:** Not granted
-- **Approval:** The requester approved this specification on 2026-11-12. This approval does not authorize implementation.
+- **Owner/reviewer:** Requester as Product Owner, Release Decision Owner, and technical reviewer; Copilot owns the replacement implementation through [issue 2](https://github.com/j0hnnymiller/20261109-aiasd-brown/issues/2).
+- **Implementation authorization:** Granted separately on 2026-11-13 by the requester's replacement-implementation assignment in [issue 2](https://github.com/j0hnnymiller/20261109-aiasd-brown/issues/2). Implementation is in progress, not accepted or verified.
+- **Approval:** The requester approved this specification on 2026-11-12. Specification approval and subsequent implementation authorization are distinct.
 - **Sources:** [Implementation plan, Slice 1](../task-manager-implementation-plan.md#slice-1-first-use-and-first-task); [product requirements](../task-manager-requirements.md); [approved architecture](../task-manager-architecture.md)
 
 ## Table of Contents
@@ -184,7 +184,7 @@ The workflow runs `dotnet test TaskManager.sln --configuration Release` from the
 - **Approval evidence:** The requester approved this specification on 2026-11-12 after accepting technical reviewer responsibility. All nine acceptance criteria map to planned checks. No implementation or test execution is implied.
 - **Execution evidence:** Not run; specification only.
 - **Risks:** If page memory is lost before a retry completes, the initial workspace credentials cannot be recovered; an inaccessible workspace may remain, and a user-confirmed restart may create a separate workspace. Review this trade-off before implementation. Recovery flow response-loss handling remains an architecture-level decision for the later recovery slice.
-- **Next dependency/handoff:** Specification review and approval are complete. Pin compatible patch versions and configure local PostgreSQL/secrets during implementation planning. Only after separate implementation authorization, invoke the [implement-vertical-slice skill](../.github/skills/implement-vertical-slice/SKILL.md) with this specification path. Slice 2 and later slices remain out of scope.
+- **Next dependency/handoff:** Specification approval and separate replacement implementation authorization are recorded. Copilot is assigned through [issue 2](https://github.com/j0hnnymiller/20261109-aiasd-brown/issues/2); use the [implement-vertical-slice skill](../.github/skills/implement-vertical-slice/SKILL.md) within that assignment's bounded plan. Pin compatible patch versions and configure isolated PostgreSQL/secrets. Slice 2 and later slices remain out of scope.
 
 ## Resolved decisions and remaining gates
 
@@ -198,10 +198,10 @@ The requester selected the following implementation baseline on 2026-11-12:
 
 The requester also selected browser-detected IANA zone with explicit user selection on failed detection; 256-bit random credentials with SHA-256 verifiers and the cookie/CSRF policy above; and same-page-memory retry with explicit recovery-loss handling. These decisions resolve Slice 1's previously open technical choices.
 
-1. **Technical review:** Complete. The requester approved this specification on 2026-11-12. Implementation authorization remains separate.
+1. **Technical review:** Complete. The requester approved this specification on 2026-11-12; separate replacement implementation authorization was granted on 2026-11-13 through issue 2.
 2. **Exact versions and setup:** Pin supported patch versions and configure local PostgreSQL, secrets, and test infrastructure in the implementation proposal. Compatibility must be verified before coding; patch pinning is a setup prerequisite, not a product decision.
 3. **Abuse thresholds:** Endpoint-specific rate limiting is approved, but numeric thresholds remain deferred. This does not block local Slice 1 verification; thresholds must be documented and tested before pilot launch.
 
 ## Implementation handoff
 
-This approved specification defines one bounded slice and does not authorize implementation. After separate implementation authorization, invoke the repository's generic vertical-slice workflow with `specs/SL-001-first-use-first-task.spec.md`. The implementation workflow must propose its own bounded plan and wait for separate approval before editing code.
+This approved specification defines one bounded slice. The requester separately authorized the replacement implementation through [issue 2](https://github.com/j0hnnymiller/20261109-aiasd-brown/issues/2), which supplies the bounded execution plan and requires end-to-end execution. Follow that assignment and the repository's generic vertical-slice workflow with this specification. Seek renewed approval for conflicts or scope changes; do not begin dependent slices.
