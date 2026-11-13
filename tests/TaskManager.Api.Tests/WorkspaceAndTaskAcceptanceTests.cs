@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -65,6 +66,20 @@ public sealed class WorkspaceAndTaskAcceptanceTests : IDisposable
         Assert.True(missing.StatusCode == HttpStatusCode.BadRequest, "A missing zone must require explicit selection.");
         Assert.True(unsupported.StatusCode == HttpStatusCode.BadRequest, "An unsupported zone must be rejected.");
         Assert.Equal(before, await ReadScalarAsync<long>("SELECT count(*) FROM workspaces"));
+    }
+
+    [Fact]
+    public async Task SupportedTimeZonesUseIanaIdentifiers()
+    {
+        await using var session = await TestSession.CreateAsync(factory);
+        using var response = await session.Client.GetAsync("/api/time-zones");
+        var supportedZones = await response.Content.ReadFromJsonAsync<string[]>();
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK, "Supported time zones should be available.");
+        Assert.True(supportedZones is not null &&
+            supportedZones.Contains("America/Los_Angeles", StringComparer.Ordinal) &&
+            supportedZones.All(zone => zone == "UTC" || zone.Contains('/')),
+            "The supported zone catalog must contain IANA identifiers.");
     }
 
     [Fact]

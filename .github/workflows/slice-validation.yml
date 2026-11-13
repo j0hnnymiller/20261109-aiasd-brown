@@ -93,6 +93,8 @@ jobs:
       - name: Install browser
         working-directory: web
         run: npx playwright install --with-deps chromium
+      - name: Install certificate trust tooling
+        run: sudo apt-get install -y libnss3-tools
       - name: Run isolated browser tests without sensitive captures
         working-directory: web
         env:

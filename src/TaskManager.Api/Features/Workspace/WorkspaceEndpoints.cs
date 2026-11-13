@@ -11,10 +11,17 @@ namespace TaskManager.Api.Features.Workspace;
 
 public static class WorkspaceEndpoints
 {
+    private static readonly string[] SupportedTimeZones = TimeZoneInfo.GetSystemTimeZones()
+        .Select(ToIanaTimeZoneId)
+        .Where(value => value is not null)
+        .Select(value => value!)
+        .Distinct(StringComparer.Ordinal)
+        .Order(StringComparer.Ordinal)
+        .ToArray();
+
     public static void Map(RouteGroupBuilder api)
     {
-        api.MapGet("/time-zones", () => Results.Ok(
-            TimeZoneInfo.GetSystemTimeZones().Select(zone => zone.Id).Order(StringComparer.Ordinal)));
+        api.MapGet("/time-zones", () => Results.Ok(SupportedTimeZones));
         api.MapGet("/csrf", GetCsrfToken);
         api.MapPost("/workspaces", CreateWorkspaceAsync);
         api.MapGet("/workspace", GetWorkspaceAsync);
@@ -66,7 +73,7 @@ public static class WorkspaceEndpoints
         }
 
         if (string.IsNullOrWhiteSpace(request.TimeZone) ||
-            !TimeZoneInfo.GetSystemTimeZones().Any(zone => zone.Id == request.TimeZone))
+            !SupportedTimeZones.Contains(request.TimeZone, StringComparer.Ordinal))
         {
             return ValidationError("timeZone", "Select a supported time zone before creating a workspace.");
         }
@@ -194,6 +201,18 @@ public static class WorkspaceEndpoints
 
     private static bool IsUniqueViolation(DbUpdateException exception) =>
         exception.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation };
+
+    private static string? ToIanaTimeZoneId(TimeZoneInfo timeZone)
+    {
+        if (timeZone.Id == "UTC" || timeZone.Id.Contains('/'))
+        {
+            return timeZone.Id;
+        }
+
+        return TimeZoneInfo.TryConvertWindowsIdToIanaId(timeZone.Id, out var ianaId)
+            ? ianaId
+            : null;
+    }
 }
 
 public sealed record CreateWorkspaceRequest(string? TimeZone, string? DeviceToken, string? RecoverySecret);

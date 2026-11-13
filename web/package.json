@@ -2,7 +2,7 @@
   "name": "web",
   "version": "1.0.0",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 5173",
+    "dev": "bash scripts/run-vite-dev.sh",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "test": "vitest run",
