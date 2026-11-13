@@ -25,6 +25,11 @@ revisions:
   - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
     model: "unknown/unknown@unknown"
     date: "2026-11-13"
+    change: "Required trusted credential transport and transactional same-payload retry verification after PR 3 review."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
     change: "Required environment-independent sanitized exception handling and credential-lifecycle regression tests after PR 1 review."
     ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
@@ -61,6 +66,7 @@ Apply these rules to the task-manager backend. The selected baseline is .NET 10 
 
 - Authenticate each device using its distinct, opaque credential. Store only a secure verifier server-side; never log or return raw credentials after issuance.
 - Enforce expiry and revocation on every protected request. Use the approved Secure, HttpOnly cookie policy, appropriate SameSite behavior, CSRF defenses, and origin checks for state-changing requests.
+- Use trusted HTTPS for credential-bearing flows in local development and browser tests as well as deployment. Trace browser-to-entry-point and proxy-to-API transport; do not silently forward raw credentials over HTTP. Align server listeners, proxy targets, allowed Origins, and browser-test URLs. Localhost secure-context/cookie exceptions are not encryption. Do not bypass certificate validation or weaken cookie/Origin policy to make tests pass.
 - Treat device authentication and CSRF tokens as independently expiring state. A returning authorized device must be able to obtain a fresh CSRF token without creating another workspace; keep server-side CSRF and Origin validation enforced.
 - Make pairing grants short-lived and single-use; verify issuer authorization and consume a grant atomically with device issuance. Do not consume grants on link fetch.
 - Rate-limit workspace creation, pairing, recovery, and task read/write endpoints independently; numeric limits are open decisions and must be documented and tested before pilot launch.
@@ -72,6 +78,7 @@ Apply these rules to the task-manager backend. The selected baseline is .NET 10 
 - Treat PostgreSQL as the authoritative store. Use workspace-scoped reads and writes and enforce same-workspace task/list ownership in application logic and database constraints.
 - Commit state changes and version increments atomically. Use conditional version checks for updates and removals; report stale writes as explicit conflicts rather than overwriting newer data.
 - Make creates and other non-idempotent operations safe against ambiguous responses and retries using stable operation identifiers or an approved equivalent.
+- Bind each operation identifier to an immutable request fingerprint and commit its result atomically with the mutation. Same-key/same-payload replay returns the original outcome; changed-payload reuse fails explicitly without mutation. Test a committed write whose response is lost, then retry and verify exactly one persisted result; a pre-commit failure alone does not establish retry safety. Coordinate the client payload/key lifecycle with the [React rules](react-typescript.instructions.md#api-refresh-and-mutation-behavior).
 - Ensure workspace creation and its required default Tasks list succeed or fail together.
 - Keep date-only due dates distinct from UTC instants. Compute calendar behavior using the configured workspace time zone, not a server or browser local default.
 - Keep the deletion ledger independent from the restored application database. Do not expose restored data until ledger reapplication and access-state reconciliation succeed; define consistency and failure behavior before implementing restore.
@@ -90,6 +97,8 @@ Apply these rules to the task-manager backend. The selected baseline is .NET 10 
 - [ ] Concurrent stale updates cannot overwrite or recreate newer/deleted records.
 - [ ] Pairing, recovery, and task failures return explicit safe outcomes.
 - [ ] Logs and errors exclude credentials, recovery material, and task content.
+- [ ] Credential-bearing development and E2E requests use trusted HTTPS through the configured proxy/API path without certificate-validation bypasses.
+- [ ] Lost-response retries return the original result exactly once; changed-payload key reuse is rejected without mutation.
 - [ ] Database writes preserve all required workspace/list/task invariants.
 - [ ] Restore cannot serve data before deletion-ledger and access-state checks complete.
 - [ ] No unselected library, hosting provider, or numeric operational target is assumed.

@@ -24,6 +24,11 @@ revisions:
   - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
     model: "unknown/unknown@unknown"
     date: "2026-11-13"
+    change: "Required concrete transport, diagnostic, configuration-precedence, bootstrap-retry, and ambiguous-create verification mappings."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
     change: "Required a failure/lifecycle verification matrix and explicit test-service and sensitive-artifact boundaries."
     ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
 ---
@@ -72,6 +77,8 @@ Optional: Add diagrams, decision records, or supporting tables only when they cl
 Include a compact matrix mapping each applicable scenario to an observable outcome and a named planned test/check: dependency failure, delayed/out-of-order responses, draft edits during a save, returning browsers with independently expired cookies, recovery through an actual retry control, secret-bearing captures, and accidental reuse of development services. Mark non-applicable scenarios with a reason. Distinguish plans from execution evidence.
 
 Specify test database/server ownership, safe configuration checks, and capture/retention policy. Include real transport coverage where UI mocks would hide cookie or HTTP behavior. Do not mark the slice implemented solely because happy paths or coverage targets pass.
+
+For credential-bearing, bootstrap, or create flows, map these risks to named checks before implementation: trusted HTTPS across entry point/proxy/API; secret-safe assertion failure diagnostics; effective child-server database selection with competing inherited overrides; transient bootstrap failure versus confirmed 401 with an actual read-retry control; and commit-then-response-loss with immutable payload/key retry, no duplicates, and subsequent edited-draft submission. For each check, specify the test layer, observable result, and CI command. A message offering retry, a localhost secure context, an intended environment variable, or a pre-commit failure is not evidence for the respective requirement.
 
 ## Authoring and implementation handoff
 

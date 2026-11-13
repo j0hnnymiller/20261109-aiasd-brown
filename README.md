@@ -17,6 +17,11 @@ revisions:
   - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
     model: "unknown/unknown@unknown"
     date: "2026-11-13"
+    change: "Documented PR 3 prevention rules, required review regressions, and the fresh issue 2 implementation handoff."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
     change: "Indexed review-driven generation safeguards and conditional application CI for the replacement Slice 1 implementation."
     ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "7c5afae0-9dc2-465f-a19e-58cc8812f033"
@@ -102,9 +107,11 @@ This repository contains an approved product requirements specification for a ta
 - [Copilot Implementation Entry Point](.github/copilot-instructions.md) - Loads the applicable stack and slice guidance and requires failure/lifecycle regression evidence.
 - [Slice Implementation Skill](.github/skills/implement-vertical-slice/SKILL.md) - Bounded implementation with acceptance checks, a failure/lifecycle matrix, and safe test infrastructure.
 - [TDD Instructions](.github/instructions/test-driven-development.instructions.md), [Vertical-Slice Instructions](.github/instructions/vertical-slice-implementation.instructions.md), and [Specification Instructions](.github/instructions/implementation-specifications.instructions.md) - React-aware discovery, risk-driven regression checks, and explicit verification requirements.
-- [Slice Validation Workflow](.github/workflows/slice-validation.yml) - Explicit planning-only result until application files exist; then requires API, frontend, and Chromium checks using disposable PostgreSQL databases without artifact uploads. The replacement implementation must supply the documented manifests, npm scripts, and Chromium project.
+- [Slice Validation Workflow](.github/workflows/slice-validation.yml) - Explicit planning-only result until application files exist; then requires API, frontend, named review-regression, and Chromium checks using disposable PostgreSQL databases without artifact uploads. The replacement implementation must supply the documented manifests, npm scripts (including `test:regressions`), and Chromium project.
 
 The stack and TDD instructions require sanitized exception responses in all environments, no credential-bearing test captures, isolated test-owned servers, pending-save draft protection, actionable prerequisite retries, and missing-CSRF acquisition for returning devices. These safeguards address review feedback from the superseded Slice 1 PR; the unmerged application commits are not part of this baseline.
+
+The requester also directed retirement of [PR 3](https://github.com/j0hnnymiller/20261109-aiasd-brown/pull/3) and a fresh implementation through [issue 2](https://github.com/j0hnnymiller/20261109-aiasd-brown/issues/2). Its six findings are mapped to [named regression checks](specs/SL-001-first-use-first-task.spec.md#failure-and-lifecycle-verification-matrix): trusted HTTPS, secret-safe cookie/mock assertion failures, effective E2E database selection despite inherited overrides, retriable access checks that preserve identity, and immutable payload/key retries after lost create responses. CI requires the focused regression script and deliberately exports both database variables during E2E. The replacement must supply actual tests, trusted certificate setup, and observed results; planning-only CI is not application acceptance.
 
 Milestone 1 (Product Readiness) is accepted. The MVP has private individual task spaces with no required accounts. The requester owns product acceptance and release decisions; the plan records the approved pilot measures and deferred account-specific questions.
 

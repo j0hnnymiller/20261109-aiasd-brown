@@ -19,9 +19,14 @@ task_durations:
 total_duration: "00:15:00"
 ai_log: "ai-logs/2026/05/20/test-driven-development-20260520/conversation.md"
 source: "johnmillerATcodemag-com"
-applyTo: "**/*.{cs,ts,tsx,js,jsx,py,java,go,rb}"
-description: "Use when writing or changing application code, React components, tests, Playwright configuration, or test infrastructure. Covers TDD, failure scenarios, secret-safe artifacts, and isolated test services."
+applyTo: "**/*.{cs,ts,tsx,js,jsx,mjs,cjs,py,java,go,rb}"
+description: "Use when writing or changing application code, React components, tests, Vite/Playwright configuration, or test infrastructure. Covers TDD, failure scenarios, secret-safe assertion diagnostics, trusted HTTPS, and effective test-service isolation."
 revisions:
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
+    change: "Added secret-safe matchers, inherited configuration regression checks, trusted transport, and commit-then-response-loss evidence."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
     model: "unknown/unknown@unknown"
     date: "2026-11-13"
@@ -67,9 +72,15 @@ This document provides comprehensive guidance for implementing test-driven devel
 - Before implementation, map applicable risks to named tests: dependency failure, delayed or out-of-order responses, edits during saves, returning browsers with independently expired cookies, actionable retries, sensitive captures, and test-service isolation. Give an explicit reason for any non-applicable scenario; a happy-path test or coverage percentage is not a substitute.
 - Use deferred promises or controlled network responses for async state transitions. Test the actual API client separately when component tests mock its exports, so cookie acquisition, request headers, and failure handling are not bypassed by every test.
 - Treat test traces, screenshots, videos, HAR files, storage-state exports, assertion output, and CI attachments as persistence surfaces. Disable capture for flows that issue or display credentials unless sensitive data can be reliably excluded from every retained surface. Failure-only capture is still capture. Inspect failure-path configuration and any permitted artifacts; never persist a secret merely to prove it was captured.
+- Treat matcher diagnostics as logging: xUnit string/collection assertions can print complete Set-Cookie headers, and Vitest mock-argument matchers can print every credential-bearing actual argument even when the expected matcher only mentions a safe field. Project to non-sensitive fields before asserting, or assert a boolean attribute/predicate result with a fixed safe message. Never pass the original secret-bearing value as actual, expected, custom message, or snapshot data.
+- Verify diagnostic safety by deliberately failing representative assertions in an isolated child runner with synthetic sentinel strings, not real/generated credentials. Inspect captured output in memory for sentinel absence; report only a fixed safe verdict and do not echo or retain failing output. The outer test must pass only when the expected child assertion fails and no sentinel leaks.
 - Run mutating integration/E2E tests only against explicit, isolated test databases and test-owned servers. Never fall back to a development connection or reuse an arbitrary listening API. Use dedicated ports with fresh server startup and fail if those ports are occupied or database configuration is missing/unsafe. Check readiness and effective test configuration before mutations without disclosing connection credentials.
 - Keep API integration and E2E databases separate. Restrict destructive setup/cleanup to the exact test-owned database. Verify isolation with the ordinary development server already running and verify an occupied test port fails before mutation.
+- Build child-server environments explicitly and clear competing overrides such as `TASK_MANAGER_TEST_CONNECTION` for E2E servers. Preflight must validate effective configuration using the same precedence rules as the application, not just the intended connection string. With both API-test and E2E variables exported, verify the spawned API selects only the E2E database and leaves the API-test database untouched. Fail closed on conflicting/unsafe effective configuration; never print connection strings.
+- Verify trusted HTTPS below mocked UI boundaries for credential issuance and transport. Cover the browser entry point, proxy/API hop, allowed Origins, cookie flags, and test-server URLs with certificate validation enabled. Secure-context APIs or Secure cookies on localhost are not proof of TLS.
+- Exercise initial access-check failure and a real retry without identity replacement. For ambiguous creates, simulate commit followed by response loss, attempt draft edits, retry the original immutable payload/key, and verify exactly one persisted result plus a subsequent independent save.
 - Run the repository's configured checks in CI using disposable services. Do not upload credential-bearing reports or browser artifacts. Keep planned checks distinct from observed results and report any skipped or unavailable checks.
+- Map required review-regression names to real test cases and configured commands before coding. Run focused frontend/test-infrastructure regressions through the required `test:regressions` npm script; it must fail for missing or zero matched tests and cannot be an echo, skip, or file-existence check. PostgreSQL/API and real browser checks remain in their normal CI suites. Report named results, not just aggregate counts.
 
 ### Core Principles
 

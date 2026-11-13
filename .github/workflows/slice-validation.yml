@@ -87,6 +87,9 @@ jobs:
           npm run test
           npm run lint
           npm run build
+      - name: Run required review regressions
+        working-directory: web
+        run: npm run test:regressions
       - name: Install browser
         working-directory: web
         run: npx playwright install --with-deps chromium
@@ -94,5 +97,7 @@ jobs:
         working-directory: web
         env:
           CI: 'true'
+          # Deliberately inherited: the E2E child API must clear this override.
+          TASK_MANAGER_TEST_CONNECTION: Host=127.0.0.1;Port=5432;Database=task_manager_test;Username=postgres;Password=ci-test-only
           ConnectionStrings__TaskManager: Host=127.0.0.1;Port=5432;Database=task_manager_e2e;Username=postgres;Password=ci-test-only
         run: npm run test:e2e -- --project=chromium --trace=off --reporter=line

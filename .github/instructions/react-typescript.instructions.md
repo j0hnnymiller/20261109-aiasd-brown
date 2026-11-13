@@ -25,6 +25,11 @@ revisions:
   - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
     model: "unknown/unknown@unknown"
     date: "2026-11-13"
+    change: "Separated transient bootstrap failures from authorization loss and bound ambiguous retries to immutable submitted payloads."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
     change: "Added pending-save draft ownership, actionable dependency retries, and returning-device CSRF initialization rules."
     ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
@@ -62,8 +67,10 @@ Apply these rules to the task-manager browser interface. The selected baseline i
 - Coalesce duplicate focus/visibility refresh triggers. Prevent older refresh or mutation responses from overwriting newer confirmed state.
 - Preserve drafts during refresh. On refresh failure, retain the previous view and show a clear stale/error state; never replace it with an empty list that implies success.
 - On save failure, preserve user input and explain the failure. Show “Saved” only after server confirmation; represent ambiguous outcomes as ambiguous, not as definite failure or success.
+- Keep each pending/uncertain create's operation key and immutable submitted payload together in page memory, separate from an editable draft. On an uncertain outcome, retry the same key and payload or reconcile the original result before submitting edited input as a new operation. Never send changed content with the old key or clear/rotate the key merely because the user edits or a response is lost; either can strand the form or duplicate a committed task. Test commit-then-response-loss followed by attempted edits, same-operation retry, and a distinct subsequent save.
 - Capture the submitted draft before awaiting a mutation. Either disable all draft editing while saving or clear fields only if they still represent the submitted draft; never erase newer unsaved edits after an earlier request succeeds. Verify the chosen policy with a deferred response and attempted mid-save edits, not only an immediately resolved mock.
 - Every recoverable loading failure must expose an enabled action that retries the failed operation without a page reload. A failed prerequisite request, such as supported time zones, must not leave setup disabled with only a message to "try again." Test failure, retry, and successful continuation while preserving valid input.
+- Model initial access checking, confirmed unauthenticated access, and transient network/server failures as separate states. A failed workspace/task read is not proof of missing authorization. Preserve the existing identity and expose an enabled retry of the reads; do not route transient failures into workspace setup or replace the device cookie. Test each bootstrap read failing independently, successful retry, and confirmed 401 behavior.
 - Acquire CSRF tokens through the shared mutation boundary rather than assuming onboarding initialized them. When the CSRF cookie is absent, obtain a fresh token before sending the mutation and surface acquisition failures explicitly. Verify a returning device with a valid persistent device cookie and no CSRF cookie. Do not weaken Origin/CSRF checks or blindly replay writes; preserve the operation's idempotency key.
 - Handle validation, unauthenticated access, unavailable resources, version conflicts, rate limits, and service failures as distinct user-visible states. Provide pairing or recovery guidance for authentication failure; do not silently create a new workspace.
 - Make task deletion explicit and immediate after confirmation. Do not add undo, trash, list removal, workspace deletion, or other excluded product behavior.
@@ -82,6 +89,8 @@ Apply these rules to the task-manager browser interface. The selected baseline i
 - [ ] Verify refresh failure preserves the previous view and unsaved drafts.
 - [ ] Verify stale responses cannot overwrite newer edits and conflicts retain the user's draft.
 - [ ] Verify pending-save edits are prevented or preserved after success, prerequisite failures have working retries, and returning-device writes acquire missing CSRF state.
+- [ ] Verify transient bootstrap failures retry the reads without workspace creation or identity replacement; confirmed 401 follows the explicit authentication flow.
+- [ ] Verify commit-then-response-loss retries use the original payload/key exactly once and edited drafts can subsequently save as distinct operations.
 - [ ] Verify no polling, hidden offline writes, sensitive browser persistence, or unauthorized workspace access is introduced.
 - [ ] Verify date-only due-date behavior across browser time zones and workspace-zone boundaries.
 - [ ] Verify excluded product capabilities are not exposed.
