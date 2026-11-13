@@ -27,18 +27,31 @@ revisions:
     ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
     source: "user request"
     change: "Linked the blocked draft implementation specification for Slice 1."
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    model: "unknown/unknown@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "help me unblock slice 1"
+    started: "2026-11-12T21:30:19-08:00"
+    ended: "2026-11-12T21:40:00-08:00"
+    task_durations:
+      - task: "Resolving Slice 1 implementation decisions"
+        duration: "00:09:41"
+    total_duration: "00:09:41"
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
+    source: "user decision-form responses"
+    change: "Updated Slice 1 dependencies and linked specification status after the requester resolved implementation decisions."
 ---
 
 # Task Manager Implementation Plan: Vertical Slices
 
-**Status:** Proposed implementation sequence; no implementation authorization is implied.
+**Status:** Proposed implementation sequence; Slice 1 specification is ready for technical review; no implementation authorization is implied.
 **Date:** 2026-11-12
 
 ## Purpose and Basis
 
 Break the approved task manager MVP into end-to-end, independently verifiable user outcomes. Each slice includes the interface, application behavior, persisted state where needed, and acceptance evidence. The plan follows the approved [product requirements](task-manager-requirements.md), [MVP plan](task-manager-mvp-plan.md), and [architecture](task-manager-architecture.md).
 
-Milestone 1 is accepted. The requester is Product Owner, Release Decision Owner, and pilot operations/support owner. The MVP uses private task spaces without required accounts and includes TM-01 through TM-13. The approved stack is React/TypeScript, ASP.NET Core, and PostgreSQL. Exact versions, libraries, hosting, budget, workload, and several pilot operations decisions remain open in the architecture.
+Milestone 1 is accepted. The requester is Product Owner, Release Decision Owner, and pilot operations/support owner. The MVP uses private task spaces without required accounts and includes TM-01 through TM-13. The requester selected React 19/TypeScript 5.9 with Node.js LTS/Vite, .NET 10 LTS/ASP.NET Core 10 with EF Core 10/Npgsql, PostgreSQL 18, Vitest/Testing Library, Playwright, and xUnit. Compatible patch versions remain to be pinned. Hosting, budget, workload, and several pilot operations decisions remain open in the architecture.
 
 This document sequences implementation work; it does not authorize development, select unresolved tools, add product scope, or provide estimates. No developer capacity or release dates were supplied.
 
@@ -67,7 +80,7 @@ This document sequences implementation work; it does not authorize development, 
 
 ## Slice 1: First Use and First Task
 
-**Implementation specification:** [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Draft blocked on unresolved implementation prerequisites; does not authorize implementation.
+**Implementation specification:** [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Ready for technical review; implementation approval and authorization remain separate.
 
 **User story:** As an individual, I can start a private task space without registering an account and save and view my first task.
 
@@ -84,7 +97,7 @@ This document sequences implementation work; it does not authorize development, 
 
 **Validation:** First-use-to-first-task walkthrough, reload/open refresh, title validation, and workspace-isolation tests.
 
-**Dependencies and unresolved items:** Selected stack is known. Confirm exact supported versions and libraries before implementation. Hosting is not required for local slice validation but must be selected before the pilot.
+**Dependencies and unresolved items:** Stack versions and test tooling are selected; pin compatible patch versions and provision isolated local PostgreSQL/test secrets before implementation. Hosting is not required for local slice validation but must be selected before the pilot.
 
 ## Slice 2: Edit and Organize Tasks
 

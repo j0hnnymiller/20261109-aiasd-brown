@@ -21,13 +21,18 @@ tags: ["aspnet-core", "csharp", "backend", "task-manager"]
 owner: "Development Team"
 reviewedDate: "2026-11-12"
 nextReview: "2027-02-12"
+revisions:
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    date: "2026-11-12"
+    change: "Recorded requester selection of .NET 10 LTS, ASP.NET Core 10, EF Core 10, Npgsql, and xUnit."
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
 ---
 
 # ASP.NET Core Instructions
 
 ## Overview
 
-Apply these rules to the task-manager backend. The approved stack is C# and ASP.NET Core in a single modular web application/API. Endpoint style, exact versions, data-access, migration, and test libraries remain unselected. Follow the [architecture specification](../../task-manager-architecture.md); these instructions do not authorize implementation.
+Apply these rules to the task-manager backend. The selected baseline is .NET 10 LTS / ASP.NET Core 10, EF Core 10 with Npgsql, and xUnit in a single modular web application/API. Pin compatible patch versions during project setup. Endpoint style remains a local implementation choice; follow the [architecture specification](../../task-manager-architecture.md). These instructions do not authorize implementation.
 
 ## Table of Contents
 

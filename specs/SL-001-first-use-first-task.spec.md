@@ -12,12 +12,26 @@ task_durations:
 total_duration: "00:08:10"
 ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
 source: "user request; approved requirements, architecture, and implementation plan"
+revisions:
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    model: "unknown/unknown@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "help me unblock slice 1"
+    started: "2026-11-12T21:30:19-08:00"
+    ended: "2026-11-12T21:40:00-08:00"
+    task_durations:
+      - task: "Resolving Slice 1 implementation decisions"
+        duration: "00:09:41"
+    total_duration: "00:09:41"
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
+    source: "user decision-form responses"
+    change: "Resolved toolchain, time-zone fallback, credentials/cookies, create retries, and technical review; moved the specification to Ready for technical review."
 ---
 
 # SL-001: First Use and First Task
 
-- **Status:** Blocked (draft; not implementation-ready)
-- **Owner/reviewer:** Requester as Product Owner and Release Decision Owner; technical implementation owner unassigned
+- **Status:** Ready for technical review; implementation approval and authorization remain separate
+- **Owner/reviewer:** Requester as Product Owner, Release Decision Owner, and technical reviewer; implementation owner unassigned
 - **Implementation authorization:** Not granted
 - **Sources:** [Implementation plan, Slice 1](../task-manager-implementation-plan.md#slice-1-first-use-and-first-task); [product requirements](../task-manager-requirements.md); [approved architecture](../task-manager-architecture.md)
 
@@ -30,7 +44,7 @@ source: "user request; approved requirements, architecture, and implementation p
 - [Acceptance criteria](#acceptance-criteria)
 - [Verification](#verification)
 - [Showcase and completion](#showcase-and-completion)
-- [Open decisions and blockers](#open-decisions-and-blockers)
+- [Resolved decisions and remaining gates](#resolved-decisions-and-remaining-gates)
 - [Implementation handoff](#implementation-handoff)
 
 ## Goal
@@ -42,7 +56,7 @@ As an individual, I can start a private task space without registering an accoun
 **In scope**
 
 - React/TypeScript first-use, task-entry, and task-view experience.
-- ASP.NET Core workspace creation, initial device credential and recovery-secret issuance, task creation, and workspace-scoped task reads.
+- ASP.NET Core workspace initialization, initial credential verification and cookie setting, task creation, and workspace-scoped task reads.
 - PostgreSQL persistence for the workspace, its default Tasks list, initial workspace time zone, credential verifiers, and first task.
 - Server-confirmed save and refresh behavior, explicit validation and failure feedback, and accessibility for this workflow.
 
@@ -57,20 +71,20 @@ As an individual, I can start a private task space without registering an accoun
 
 - **Existing implementation and conventions:** The repository contains planning and instruction documents but no application source, dependency manifests, test projects, or runnable test commands. The approved stack guides are [React/TypeScript](../.github/instructions/react-typescript.instructions.md), [ASP.NET Core](../.github/instructions/aspnet-core.instructions.md), and [PostgreSQL](../.github/instructions/postgresql.instructions.md). Do not infer a folder layout or library from examples in general guidance.
 - **Prerequisites:** Approved architecture and selected technologies. No earlier implementation slice is required.
-- **Environment:** Local development and isolated test data are sufficient for this slice. Hosting is not a prerequisite. Exact SDK/runtime versions, libraries, test tooling, database setup, and safe local secret configuration must be selected before implementation.
+- **Environment:** Local development and isolated test data are sufficient for this slice. Hosting is not a prerequisite. Toolchain and test choices are recorded below; pin compatible patch versions and configure an isolated local PostgreSQL instance and safe test secrets before implementation.
 - **Assumptions:** None beyond the approved requirements, architecture, and Slice 1 plan.
-- **Open questions/blockers:** See [Open decisions and blockers](#open-decisions-and-blockers). Do not resolve them by silently choosing defaults.
+- **Remaining gates:** See [Resolved decisions and remaining gates](#resolved-decisions-and-remaining-gates). Do not resolve remaining pilot decisions by silently choosing defaults.
 
 ## Behavior and contracts
 
 ### First use and workspace creation
 
 1. Require an explicit user action to create a private task space. Do not request or require an account identity.
-2. Accept the first browser's time-zone identifier and store a validated IANA identifier for the workspace. Display the selected workspace time zone to the user. Do not substitute the server or UTC time zone silently.
-3. Create the workspace, its required default list named `Tasks`, its initial device credential verifier, and its recovery-secret verifier atomically. A failed operation must not leave a partially initialized workspace.
-4. Generate opaque, high-entropy credentials with a cryptographically secure random source. Store only server-side verifiers, never raw credentials. The initial device credential expires 90 days after issuance without sliding extension.
-5. Deliver the device credential only through a server-managed Secure, HttpOnly cookie with the approved SameSite and CSRF protections. Present the recovery secret for separate safekeeping; do not automatically retain it in browser storage. Never put either secret in a URL, log, telemetry, or error detail.
-6. Do not report successful workspace creation until persistence is confirmed. Handle ambiguous responses and retries without silently creating duplicate task spaces or making secrets appear recoverable when they are not.
+2. Detect the first browser's IANA time-zone identifier and validate it. If missing or invalid, require the user to select a supported IANA zone before creation; never silently substitute the server's zone or UTC. Display the selected workspace zone.
+3. Generate an independent 256-bit device credential, recovery secret, and workspace-creation idempotency key with the browser's cryptographically secure random source. Keep all raw values in page memory only. Send credential material only over HTTPS, suppress request-body logging, and store SHA-256 verifiers only. Persist a non-secret idempotency key digest, request fingerprint, and operation result with workspace initialization. If the response is lost while the page remains open, retry with the same operation key and credential values. A retry with the same key and request reissues the same device cookie and outcome without creating another workspace; reusing the key with a different request fails explicitly.
+4. Create the workspace, its required default list named `Tasks`, and credential verifiers atomically. The device expires 90 days after issuance without sliding extension. A repeated idempotency key with a different request fingerprint must fail explicitly.
+5. On confirmed creation, set the device credential only in a Secure, HttpOnly, SameSite=Lax, host-only `__Host-` cookie with `Path=/` and no `Domain`; enforce CSRF token and Origin checks on mutations. Present the recovery secret for separate safekeeping only after confirmation; never store it in browser storage or place either secret in a URL, log, telemetry, or error detail.
+6. If the page reloads or closes before a lost creation response can be retried, do not persist or reconstruct the raw secrets. Explain that access to that attempted creation cannot be recovered; require an explicit user decision before starting a new workspace. An inaccessible incomplete workspace may remain; do not silently retry or auto-delete it.
 
 ### First task and read
 
@@ -79,7 +93,7 @@ As an individual, I can start a private task space without registering an accoun
 - Treat due date as a calendar date, not a timestamp. Preserve the approved title/description values; do not add unapproved trimming, markup, or normalization behavior.
 - Return or read server-confirmed task data scoped to the workspace authenticated by the device credential. The browser must not supply a workspace identifier as proof of access.
 - Refresh current data when the app opens, returns to its visible active view, or the user requests refresh. Do not poll or push updates. On refresh failure, retain any prior view with an explicit stale/error indication; on save failure, preserve the draft and do not show a saved state.
-- Make create retries safe against ambiguous responses so a retry cannot create a duplicate task. The specific idempotency mechanism remains an implementation decision to resolve before coding.
+- Give each task-create operation an idempotency key scoped to the authenticated workspace. Persist the key digest, request fingerprint, and task identifier transactionally with the task. Repeating the same key and request returns the same task outcome; reusing the key with a different request fails explicitly. Do not retain task content in operational logs.
 
 ### Errors, compatibility, and operations
 
@@ -93,12 +107,12 @@ As an individual, I can start a private task space without registering an accoun
 ## Acceptance criteria
 
 - **AC-001 - Account-free initialization:** Given a person starts a task space, when creation succeeds, then the service has one private workspace, one default `Tasks` list, the initial time-zone identifier, and verifier records for the initial device and recovery secret, without account identity.
-- **AC-002 - Time-zone display:** Given the first browser provides a valid IANA time-zone identifier, when workspace creation succeeds, then that identifier is stored and shown as the workspace time zone. Missing/invalid input behavior must be decided before implementation; it is not implicitly a server-local or UTC fallback.
-- **AC-003 - Credential handling:** Given workspace creation succeeds, then the browser receives the device credential only as a Secure, HttpOnly cookie, the recovery secret is presented for separate safekeeping, and neither raw secret is stored in browser storage, persisted as a verifier value, logged, or exposed in a URL.
+- **AC-002 - Time-zone display:** Given the first browser provides a valid IANA identifier, when workspace creation succeeds, then that identifier is stored and shown. Given detection fails or yields an invalid identifier, then creation remains blocked until the user explicitly selects a supported IANA zone; no server-local or UTC fallback is silent.
+- **AC-003 - Credential handling:** Given workspace creation succeeds, then a 256-bit device credential is set only in a Secure, HttpOnly, SameSite=Lax, host-only `__Host-` cookie with `Path=/` and no `Domain`, and the 256-bit recovery secret is presented for separate safekeeping. The server persists SHA-256 verifiers only; raw secrets remain in page memory only and are absent from browser storage, logs, telemetry, and URLs.
 - **AC-004 - First task:** Given an authorized workspace and a nonblank title, when the user saves a task, then the server confirms the task with the submitted optional description, date-only due date, and approved priority (when provided), associates it with the same workspace's default `Tasks` list, and the task appears in the current view.
 - **AC-005 - Required title:** Given a missing, empty, or whitespace-only title, when the user saves, then actionable validation feedback appears and no task is persisted or shown as saved.
 - **AC-006 - Workspace isolation:** Given a request without a valid device credential or an attempt to access a resource from another workspace, when task data is requested or changed, then the request fails explicitly without returning or disclosing the other workspace's data.
-- **AC-007 - Confirmed outcomes and retries:** Given workspace initialization or task creation fails, when the user sees the result, then the UI does not claim success and retains safe task-entry input where applicable. Retrying an ambiguous task-create response does not create a duplicate. Workspace initialization is atomic.
+- **AC-007 - Confirmed outcomes and retries:** Given workspace initialization or task creation fails, then the UI does not claim success and retains safe task-entry input where applicable. Retrying the same workspace-create operation while its key and credential values remain in page memory, or retrying task creation with the same workspace-scoped key and request, does not create duplicates. Reuse with a different request fails. If workspace-creation secrets are lost with the page, the user receives an explicit unrecoverable outcome and must confirm before starting a separate workspace; no silent restart or cleanup occurs. Workspace initialization is atomic.
 - **AC-008 - Refresh model:** Given a task was successfully saved, when the app opens, returns to its visible active view, or the user requests refresh, then the server-confirmed task is shown. A continuously open view makes no periodic or push request.
 - **AC-009 - Accessible workflow:** Given keyboard-only or assistive-technology use, then workspace creation, time-zone confirmation, task entry, validation errors, save outcome, and refresh/stale state are understandable and operable without relying on color alone.
 
@@ -127,20 +141,27 @@ These are planned checks, not execution evidence. Do not substitute mocks for Po
 3. Reload or reopen the app and manually refresh; confirm the task appears with unchanged date and data. Submit a blank title and confirm actionable validation with no saved task.
 4. Run automated isolation and failure-path checks with a second test workspace; verify no secrets or task content appear in logs, URLs, telemetry, or browser storage.
 
-- **Completion evidence:** Diff limited to this specification and approved discovery/index updates; all ACs mapped to observed checks; test commands and results recorded after toolchain selection; unresolved pilot blockers remain visible.
+- **Specification readiness evidence:** Scope and exclusions are explicit; all nine acceptance criteria map to planned checks; pilot decisions that remain open are visible. No implementation or test execution is implied.
 - **Execution evidence:** Not run; specification only.
-- **Risks:** Secret-response loss or retries could strand a newly created workspace or duplicate resources unless the open idempotency and recovery-response decisions are settled. Missing/invalid browser time-zone behavior and exact credential/cookie controls also block implementation readiness.
-- **Next dependency/handoff:** Resolve the blockers below, obtain technical review, then request approval for this specification. Only after approval and separate implementation authorization, invoke the [implement-vertical-slice skill](../.github/skills/implement-vertical-slice/SKILL.md) with this specification path. Slice 2 and later slices remain out of scope.
+- **Risks:** If page memory is lost before a retry completes, the initial workspace credentials cannot be recovered; an inaccessible workspace may remain, and a user-confirmed restart may create a separate workspace. Review this trade-off before implementation. Recovery flow response-loss handling remains an architecture-level decision for the later recovery slice.
+- **Next dependency/handoff:** Complete technical review, then request approval for this specification. Pin compatible patch versions and configure local PostgreSQL/secrets during implementation planning. Only after specification approval and separate implementation authorization, invoke the [implement-vertical-slice skill](../.github/skills/implement-vertical-slice/SKILL.md) with this specification path. Slice 2 and later slices remain out of scope.
 
-## Open decisions and blockers
+## Resolved decisions and remaining gates
 
-1. **Supported toolchain and libraries:** Select compatible supported React/TypeScript, .NET/ASP.NET Core, and PostgreSQL versions and the frontend build, persistence, migration, and test tools. Keep hosting and provider decisions separate unless needed for local test execution.
-2. **Initial time-zone failure behavior:** Decide what to do when the browser cannot supply a valid IANA identifier. The architecture requires initialization from the first browser and display to the user but does not approve a fallback.
-3. **Credential and cookie policy:** Specify safe credential/secret formats and verifier strategy, cookie lifetime/attributes (including SameSite), and CSRF/origin enforcement details consistent with the approved architecture. Do not weaken the 90-day fixed device lifetime or expose secrets to JavaScript.
-4. **Create-response loss and retry contract:** Define how workspace creation and task creation handle a committed operation whose response is lost, including how secrets can be delivered safely and how retries avoid duplicates. Do not assume replaying secrets or generating a second workspace is safe.
-5. **Numeric abuse limits:** Endpoint-specific rate limiting is approved, but numeric thresholds remain deferred. This does not block isolated local verification; thresholds must be documented and tested before pilot launch.
-6. **Technical owner and review:** Assign implementation ownership and review the API, schema, and access-policy details before marking this spec Approved.
+The requester selected the following implementation baseline on 2026-11-12:
+
+- React 19 and TypeScript 5.9, supported Node.js LTS, Vite, Vitest, Testing Library, and Playwright.
+- .NET 10 LTS / ASP.NET Core 10, EF Core 10 with Npgsql, and xUnit.
+- PostgreSQL 18.
+- Pin exact patch versions in project manifests during setup; confirm runtime/support compatibility when implementation begins.
+- Local test environment only; hosting/provider and cost decisions remain deferred to pilot readiness.
+
+The requester also selected browser-detected IANA zone with explicit user selection on failed detection; 256-bit random credentials with SHA-256 verifiers and the cookie/CSRF policy above; and same-page-memory retry with explicit recovery-loss handling. These decisions resolve Slice 1's previously open technical choices.
+
+1. **Technical review:** The requester accepted technical reviewer responsibility. Review this specification against API, schema, credential delivery, and failure handling, then record approval or requested changes. Implementation authorization remains separate.
+2. **Exact versions and setup:** Pin supported patch versions and configure local PostgreSQL, secrets, and test infrastructure in the implementation proposal. Compatibility must be verified before coding; patch pinning is a setup prerequisite, not a product decision.
+3. **Abuse thresholds:** Endpoint-specific rate limiting is approved, but numeric thresholds remain deferred. This does not block local Slice 1 verification; thresholds must be documented and tested before pilot launch.
 
 ## Implementation handoff
 
-This specification defines one bounded slice and does not authorize implementation. Once blockers 1-4 and 6 are resolved and the requester approves the specification, invoke the repository's generic vertical-slice workflow with `specs/SL-001-first-use-first-task.spec.md`. The implementation workflow must propose its own bounded plan and wait for separate approval before editing code.
+This specification defines one bounded slice and does not authorize implementation. After technical review, update the status to `Approved` only if accepted. Then request separate implementation authorization and invoke the repository's generic vertical-slice workflow with `specs/SL-001-first-use-first-task.spec.md`. The implementation workflow must propose its own bounded plan and wait for separate approval before editing code.

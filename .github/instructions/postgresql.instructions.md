@@ -21,13 +21,18 @@ tags: ["postgresql", "sql", "database", "task-manager"]
 owner: "Development Team"
 reviewedDate: "2026-11-12"
 nextReview: "2027-02-12"
+revisions:
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    date: "2026-11-12"
+    change: "Recorded requester selection of PostgreSQL 18 and EF Core 10 with Npgsql."
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
 ---
 
 # PostgreSQL Instructions
 
 ## Overview
 
-Apply these rules to the task-manager relational schema and SQL. PostgreSQL is the selected authoritative database. The provider, version, data-access library, and migration tooling remain unselected; verify their supported behavior during implementation planning. Follow the [architecture specification](../../task-manager-architecture.md); do not infer schema approval or implementation authorization from this guide.
+Apply these rules to the task-manager relational schema and SQL. PostgreSQL 18 is the selected authoritative database and Npgsql/EF Core 10 is the selected backend data-access baseline. Pin compatible patch versions and verify provider behavior during local setup. Follow the [architecture specification](../../task-manager-architecture.md); do not infer schema approval or implementation authorization from this guide.
 
 ## Table of Contents
 

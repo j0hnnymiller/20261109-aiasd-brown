@@ -21,13 +21,18 @@ tags: ["react", "typescript", "frontend", "task-manager"]
 owner: "Development Team"
 reviewedDate: "2026-11-12"
 nextReview: "2027-02-12"
+revisions:
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    date: "2026-11-12"
+    change: "Recorded requester selection of React 19, TypeScript 5.9, Node.js LTS, Vite, Vitest, Testing Library, and Playwright."
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
 ---
 
 # React and TypeScript Instructions
 
 ## Overview
 
-Apply these rules to the task-manager browser interface. The approved stack is React and TypeScript; exact versions, component libraries, build tooling, and test libraries remain unselected. Follow the [architecture specification](../../task-manager-architecture.md) and do not treat these instructions as authorization to implement the application.
+Apply these rules to the task-manager browser interface. The selected baseline is React 19, TypeScript 5.9, supported Node.js LTS, Vite, Vitest, Testing Library, and Playwright. Pin compatible patch versions during project setup. Follow the [architecture specification](../../task-manager-architecture.md) and do not treat these instructions as authorization to implement the application.
 
 ## Table of Contents
 

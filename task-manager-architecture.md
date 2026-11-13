@@ -92,6 +92,19 @@ revisions:
     ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
     source: "user request and stack-selection form"
     change: "Recorded requester selection of React/TypeScript, ASP.NET Core, and PostgreSQL; retained hosting and implementation decisions as open."
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    model: "unknown/unknown@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "help me unblock slice 1"
+    started: "2026-11-12T21:30:19-08:00"
+    ended: "2026-11-12T21:40:00-08:00"
+    task_durations:
+      - task: "Resolving Slice 1 implementation decisions"
+        duration: "00:09:41"
+    total_duration: "00:09:41"
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
+    source: "user decision-form responses"
+    change: "Selected supported stack baseline, explicit time-zone fallback, credential/cookie policy, browser-generated memory-only retry contract, and requester technical review."
 ---
 
 # Task Manager MVP Architecture Specification
@@ -118,8 +131,11 @@ Architecture discussions added cross-device access, device pairing and recovery,
 | AD-05 | Refresh on opening, returning to the app, or manual request; no periodic polling or live updates. | Approved by requester. |
 | AD-06 | Use a hosted modular monolith and relational database. | Approved with this specification on 2026-11-12. |
 | AD-07 | Use server-confirmed saves and version-based conflict detection. | Approved with this specification on 2026-11-12. |
+| AD-08 | Use React 19/TypeScript 5.9, Node.js LTS/Vite, .NET 10 LTS/EF Core 10/Npgsql, PostgreSQL 18, Vitest/Testing Library, Playwright, and xUnit. | Selected by requester on 2026-11-12; pin compatible patch versions during implementation setup. |
+| AD-09 | If browser time-zone detection fails validation, require explicit selection of a supported IANA zone; do not silently fall back. | Selected by requester on 2026-11-12. |
+| AD-10 | Use 256-bit device and recovery tokens, store SHA-256 verifiers only, apply a fixed 90-day host-only `__Host-` Secure/HttpOnly/SameSite=Lax cookie, and enforce CSRF token and Origin checks on mutations. Keep initial raw tokens in page memory for same-operation retries only. | Selected by requester on 2026-11-12; detailed in Sections 5 and 8. |
 
-The requester approved this specification on 2026-11-12. Its technical controls form the approved design baseline, not evidence that they are implemented or validated. Explicit open choices, product clarifications, and provisional details remain unresolved; approval does not select a stack or authorize implementation.
+The requester approved this specification on 2026-11-12. Its technical controls form the approved design baseline, not evidence that they are implemented or validated. The stack and Slice 1 details in AD-08 through AD-10 were subsequently selected; hosting, operations, and other explicit open choices remain unresolved. Approval does not authorize implementation.
 
 ## 2. Goals, Scope, and Constraints
 
@@ -159,7 +175,7 @@ Prefer a same-origin web interface and API to simplify cookie security and deplo
 | Component | Responsibility |
 | --- | --- |
 | Web interface | Task/list workflows, pairing and recovery screens, refresh triggers, validation feedback, and explicit save/error states. |
-| Workspace access module | Create private workspaces; issue and verify device credentials; pair, list, and revoke devices; verify recovery proofs. |
+| Workspace access module | Create private workspaces; verify initial device credentials; pair, list, and revoke devices; verify recovery proofs. |
 | Tasks module | Create, edit, complete, reopen, remove, search, filter, and order tasks within the authenticated workspace. |
 | Lists module | Create named lists and move tasks between lists; enforce workspace ownership for both task and destination list. |
 | Persistence layer | Transactions, scoped queries, constraints, schema migrations, and atomic version checks. |
@@ -213,12 +229,12 @@ The following Mermaid data flow diagrams use rectangles for external entities, r
 
 ```mermaid
 flowchart LR
-    browser["Individual's browser"] -->|Explicit workspace creation request| create("Create private workspace")
-    create -->|Workspace, time zone and device/recovery credential verifiers| store[("Workspace and access records")]
+    browser["Individual's browser"] -->|Explicit request, validated time zone, idempotency key and generated credential material over HTTPS| create("Create private workspace")
+    create -->|Workspace, time zone and credential verifiers| store[("Workspace and access records")]
     create -->|Default Tasks list| lists[("Workspace lists")]
     lists -->|Committed default list identifier| create
     store -->|Committed workspace and credential identifiers| create
-    create -->|Device cookie and recovery secret| browser
+    create -->|Set-Cookie response and confirmed creation result| browser
     browser -->|Recovery secret copied for safekeeping| user["Individual"]
     classDef client fill:#E3F2F1,stroke:#28635E,color:#163A37
     classDef application fill:#EAF2F8,stroke:#28536B,color:#152D3A
@@ -228,12 +244,13 @@ flowchart LR
     class store,lists storage
 ```
 
-The browser-to-individual exchange represents the approved manual safekeeping experience, not automatic browser persistence.
+The browser-to-individual exchange represents the approved manual safekeeping experience, not automatic browser persistence. Raw tokens are generated with the browser's cryptographically secure random source and held in page memory; they are not persisted by the browser or server.
 
 1. The user explicitly starts a private workspace.
-2. The backend creates the workspace, its default Tasks list, a device credential, and a recovery secret. IDs and credentials use cryptographically secure randomness. Initialize the workspace time zone from the first browser and show it to the user; use a validated IANA identifier, not an offset.
-3. The browser receives a secure device cookie. The recovery secret is presented for separate safekeeping and is not placed in logs or automatically retained in browser storage.
-4. The interface explains that recovery requires an authorized device or that secret.
+2. The browser detects its IANA time-zone identifier and validates it. If unavailable or invalid, require explicit selection of a supported IANA zone; never silently use the server zone or UTC.
+3. The browser generates independent 256-bit device and recovery tokens and a workspace-creation idempotency key. It sends these only over HTTPS, held in page memory, with the explicit creation request. The backend stores SHA-256 verifiers only and atomically creates the workspace, default Tasks list, and access records. IDs use cryptographically secure randomness.
+4. On confirmation, the backend sets the device token in a host-only `__Host-` cookie with `Secure`, `HttpOnly`, `SameSite=Lax`, `Path=/`, no `Domain`, and a fixed 90-day expiry. The browser presents the recovery secret for separate safekeeping.
+5. The interface explains that recovery requires an authorized device or that secret. A same-page retry after a lost response resubmits the same idempotency key and token material; the server returns the original operation outcome and does not create another workspace. If page memory is lost, the raw tokens cannot be recovered; explicitly warn and require user confirmation before starting a separate workspace. No automatic cleanup is introduced.
 
 ### Pair another device
 
@@ -410,8 +427,9 @@ Use consistent structured errors: validation failures, unauthenticated access, u
 
 The approved account-free experience still requires authentication and authorization.
 
-- Use distinct, high-entropy credentials per device; store only secure verifiers server-side.
-- Use Secure, HttpOnly cookies with an appropriate SameSite policy; apply CSRF defenses and origin checks to state-changing requests.
+- Use distinct, high-entropy credentials per device and recovery token; store only secure verifiers server-side. For initial workspace creation, generate independent 256-bit device and recovery tokens with the browser's cryptographically secure random source, hold raw values in page memory only, and send them over HTTPS; never persist them in browser storage or server records.
+- Set the device credential only in a host-only `__Host-` cookie with `Secure`, `HttpOnly`, `SameSite=Lax`, `Path=/`, no `Domain`, and a fixed 90-day expiry. Apply CSRF-token and Origin checks to state-changing requests.
+- For initial workspace creation, retry only in the same live page with the same idempotency key and token values held in memory. Do not retain raw tokens for replay. If page memory is lost, report the outcome as unrecoverable and require explicit confirmation before a new workspace attempt; an inaccessible workspace may remain. This policy does not settle response-loss handling for the later recovery flow.
 - Check expiry and revocation on every protected request. Revoke unused grants from a revoked issuing device.
 - Apply separate endpoint-specific rate limits to workspace creation, grant issuance/redemption, recovery attempts, and task reads/writes. Numeric limits remain deferred until expected load and hosting are known; document and test them before pilot launch.
 - Protect against script injection: render task content as text unless a separately reviewed formatting feature is approved; apply an appropriate content security policy.
@@ -476,9 +494,10 @@ On 2026-11-12 the requester selected the following stack after reporting experie
 
 | Area | Selected technology | Architectural role |
 | --- | --- | --- |
-| Browser interface | React and TypeScript | Responsive single-page UI with accessible forms, draft preservation, and explicit refresh/error states. |
-| Backend | C# and ASP.NET Core | Single modular web application/API; authentication, authorization, validation, feature logic, and secure same-origin delivery. |
-| Relational database | PostgreSQL | Authoritative workspace data, transactional updates, foreign keys, conditional writes, and workspace-scoped queries. |
+| Browser interface | React 19 and TypeScript 5.9; supported Node.js LTS and Vite | Responsive single-page UI with accessible forms, draft preservation, and explicit refresh/error states. |
+| Backend | .NET 10 LTS / ASP.NET Core 10; EF Core 10 with Npgsql | Single modular web application/API; authentication, authorization, validation, feature logic, and secure same-origin delivery. |
+| Relational database | PostgreSQL 18 | Authoritative workspace data, transactional updates, foreign keys, conditional writes, and workspace-scoped queries. |
+| Test tooling | Vitest, Testing Library, Playwright, and xUnit | Frontend unit/component and browser-flow tests; backend unit tests. Use a real isolated PostgreSQL instance for persistence integration checks. |
 
 These are technology selections, not evidence that the required behavior is already implemented. Use an opaque, revocable per-device credential with server-side checks as specified in Section 8; a React interface or framework-provided cookie feature does not replace those checks. Keep the deletion ledger independent of database restoration and reconcile access state before a restore becomes available.
 
@@ -492,9 +511,9 @@ These are technology selections, not evidence that the required behavior is alre
 
 No measured performance or cost comparison has been supplied. All candidates require proof of workspace isolation, pairing/recovery, atomic conflict handling, deletion-ledger restoration, and accessible UI behavior. None removes those responsibilities or guarantees compliance.
 
-### Remaining technology choices
+### Selected version and tooling baseline
 
-Hosting remains undecided pending cost comparison. Exact runtime/framework/database versions, data-access and migration libraries, frontend build tooling, test frameworks, deployment packaging, and database provider are not selected. Verify supported versions and provider capabilities at implementation planning time. Compare total pilot costs, including compute, database, backup, independent ledger storage, monitoring, and operations; approve an estimate before provisioning.
+The requester subsequently selected React 19 and TypeScript 5.9 with supported Node.js LTS, Vite, Vitest, Testing Library, and Playwright; .NET 10 LTS / ASP.NET Core 10 with EF Core 10, Npgsql, and xUnit; and PostgreSQL 18. Pin compatible patch versions in project manifests and validate support during local setup. Hosting provider, region, database hosting, deployment packaging, and budget remain undecided pending cost comparison. Compare total pilot costs, including compute, database, backup, independent ledger storage, monitoring, and operations; approve an estimate before provisioning.
 
 ## 11. Alternatives and Trade-offs
 
@@ -545,18 +564,18 @@ Every increment includes automated unit/integration/UI tests appropriate to its 
 
 | Open decision | Evidence or decision needed |
 | --- | --- |
-| Stack versions and libraries | React/TypeScript, ASP.NET Core, and PostgreSQL are selected; choose supported versions, data access, migrations, frontend tooling, and test libraries before finalizing implementation specifications. |
+| Stack patch versions and local setup | Pin compatible supported patch versions and configure local PostgreSQL, secrets, and test infrastructure before coding; the selected baseline is in Section 10 and AD-08. |
 | Hosting and budget | Cost comparison pending; approve a cost estimate before provisioning. No provider, region, SKU, or monthly budget selected. |
 | Workload and performance | Establish participant/device/task counts before load testing; choose numeric performance targets after workload and environment are known. |
 | Disaster-recovery objectives | Set RPO/RTO after hosting selection; validate with a restore exercise before pilot launch. |
 | Abuse thresholds | Endpoint-specific limiting approved; choose and test numeric thresholds once load/hosting are known, before pilot launch. |
-| Access/restore implementation detail | Define safe handling of a lost recovery response and of access-state rollback during database restoration. Credential and secret values must not enter logs or backup-based user recovery. |
+| Recovery-response and restore implementation detail | Define safe handling of a lost response during the later recovery flow and access-state rollback during database restoration. Credential and secret values must not enter logs or backup-based user recovery. |
 | Operational procedures | Requester owns pilot operations/support; specify alert thresholds, support hours, incident and restore procedures before pilot launch. |
 
 ### Resolved decision groups
 
 On 2026-11-12, the requester confirmed the task/list rules in Section 4, pairing/device lifetimes and revoke-and-rotate recovery in Section 5, workspace time zone and snapshot completion evidence in Section 6, and deletion/backup/inactivity rules in Sections 4 and 9. The requester also accepted best-effort pilot availability and took pilot operations/support ownership. These are decisions, not measured or implemented outcomes.
 
-The requester subsequently selected React/TypeScript, ASP.NET Core, and PostgreSQL. Hosting, exact versions, libraries, and deployment costs remain open.
+The requester subsequently selected the versioned stack and Slice 1 time-zone, credential, cookie, and same-page retry policies recorded in AD-08 through AD-10. Hosting, patch versions, and deployment costs remain open.
 
-The requester remains Product Owner and Release Decision Owner and now owns pilot operations/support. Technical implementation ownership remains unassigned. Architecture approval and these decisions are separate from permission to implement. Resolve the relevant remaining decisions and create bounded implementation specifications before development.
+The requester remains Product Owner and Release Decision Owner and now owns pilot operations/support. Slice 1 technical review is assigned to the requester; technical implementation ownership remains unassigned. Architecture approval and these decisions are separate from permission to implement. Resolve the relevant remaining decisions and create bounded implementation specifications before development.
