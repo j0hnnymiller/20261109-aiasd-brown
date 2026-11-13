@@ -19,7 +19,14 @@ task_durations:
 total_duration: "00:15:00"
 ai_log: "ai-logs/2026/05/20/test-driven-development-20260520/conversation.md"
 source: "johnmillerATcodemag-com"
-applyTo: "**/*.{cs,ts,js,py,java,go,rb}"
+applyTo: "**/*.{cs,ts,tsx,js,jsx,py,java,go,rb}"
+description: "Use when writing or changing application code, React components, tests, Playwright configuration, or test infrastructure. Covers TDD, failure scenarios, secret-safe artifacts, and isolated test services."
+revisions:
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
+    change: "Included React files and added risk-driven regression, secret-safe capture, and test-service isolation requirements."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
 ---
 
 # Test-Driven Development Instructions
@@ -54,6 +61,15 @@ This document provides comprehensive guidance for implementing test-driven devel
 - [Examples](#examples)
 
 ## TDD Workflow
+
+### Required Failure Scenarios and Safe Test Infrastructure
+
+- Before implementation, map applicable risks to named tests: dependency failure, delayed or out-of-order responses, edits during saves, returning browsers with independently expired cookies, actionable retries, sensitive captures, and test-service isolation. Give an explicit reason for any non-applicable scenario; a happy-path test or coverage percentage is not a substitute.
+- Use deferred promises or controlled network responses for async state transitions. Test the actual API client separately when component tests mock its exports, so cookie acquisition, request headers, and failure handling are not bypassed by every test.
+- Treat test traces, screenshots, videos, HAR files, storage-state exports, assertion output, and CI attachments as persistence surfaces. Disable capture for flows that issue or display credentials unless sensitive data can be reliably excluded from every retained surface. Failure-only capture is still capture. Inspect failure-path configuration and any permitted artifacts; never persist a secret merely to prove it was captured.
+- Run mutating integration/E2E tests only against explicit, isolated test databases and test-owned servers. Never fall back to a development connection or reuse an arbitrary listening API. Use dedicated ports with fresh server startup and fail if those ports are occupied or database configuration is missing/unsafe. Check readiness and effective test configuration before mutations without disclosing connection credentials.
+- Keep API integration and E2E databases separate. Restrict destructive setup/cleanup to the exact test-owned database. Verify isolation with the ordinary development server already running and verify an occupied test port fails before mutation.
+- Run the repository's configured checks in CI using disposable services. Do not upload credential-bearing reports or browser artifacts. Keep planned checks distinct from observed results and report any skipped or unavailable checks.
 
 ### Core Principles
 

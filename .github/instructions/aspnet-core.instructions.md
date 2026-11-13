@@ -22,6 +22,11 @@ owner: "Development Team"
 reviewedDate: "2026-11-12"
 nextReview: "2027-02-12"
 revisions:
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
+    change: "Required environment-independent sanitized exception handling and credential-lifecycle regression tests after PR 1 review."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
     date: "2026-11-12"
     change: "Recorded requester selection of .NET 10 LTS, ASP.NET Core 10, EF Core 10, Npgsql, and xUnit."
@@ -48,6 +53,7 @@ Apply these rules to the task-manager backend. The selected baseline is .NET 10 
 - Organize backend code around the approved modular-monolith boundaries and end-to-end feature slices: workspace access, tasks, lists, and persistence.
 - Keep endpoint handlers, validation, application behavior, and persistence responsibilities clear. Reuse shared authorization, validation, persistence, and error-handling mechanisms rather than duplicating them.
 - Use typed request/response contracts and explicit validation. Return consistent, non-sensitive errors for validation failures, unauthenticated access, unavailable resources, version conflicts, rate limits, and service failures.
+- Register a shared exception handler in every environment, including Development, before request protection and endpoint execution. Unexpected request-time failures must return a generic Problem Details response without exception messages, stack traces, request headers, cookies, connection strings, or task content. Keep diagnostics sanitized; do not rely on production-only handling or expose the developer exception page for credential-bearing requests.
 - Choose controllers or minimal APIs only after implementation planning; do not introduce a new architectural pattern or library by assumption.
 - Keep workspace scope derived from the verified device credential. A route, query parameter, or request body workspace ID is never authorization.
 
@@ -55,6 +61,7 @@ Apply these rules to the task-manager backend. The selected baseline is .NET 10 
 
 - Authenticate each device using its distinct, opaque credential. Store only a secure verifier server-side; never log or return raw credentials after issuance.
 - Enforce expiry and revocation on every protected request. Use the approved Secure, HttpOnly cookie policy, appropriate SameSite behavior, CSRF defenses, and origin checks for state-changing requests.
+- Treat device authentication and CSRF tokens as independently expiring state. A returning authorized device must be able to obtain a fresh CSRF token without creating another workspace; keep server-side CSRF and Origin validation enforced.
 - Make pairing grants short-lived and single-use; verify issuer authorization and consume a grant atomically with device issuance. Do not consume grants on link fetch.
 - Rate-limit workspace creation, pairing, recovery, and task read/write endpoints independently; numeric limits are open decisions and must be documented and tested before pilot launch.
 - Never log task content, device credentials, recovery secrets, pairing payloads, or sensitive request bodies/URLs. Do not expose stack traces, secret values, or cross-workspace existence in client errors.
@@ -74,6 +81,7 @@ Apply these rules to the task-manager backend. The selected baseline is .NET 10 
 - Provide health/readiness behavior without disclosing secrets or task data. Emit sanitized structured logs and useful operational signals.
 - Use transactions and migrations appropriate to the selected provider and library. Make deployment and rollback compatible with schema evolution; never assume application rollback reverses a database migration.
 - Add unit and integration coverage for validation, workspace isolation, authorization expiry/revocation, pairing replay/expiry, recovery rotation, version conflicts, retry behavior, and explicit error responses.
+- Inject a request-time persistence failure under both Development and Production. Assert the generic error contract and absence of known test credential values, request headers, and stack traces. Check sanitized diagnostic output without writing credential-bearing captures to disk.
 - Test restore and deletion-ledger failure paths before pilot readiness; keep the service unavailable if required safeguards cannot be applied.
 
 ## Verification Checklist

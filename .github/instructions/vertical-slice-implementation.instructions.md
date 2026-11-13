@@ -17,7 +17,14 @@ task_durations:
 total_duration: "00:45:00"
 ai_log: "ai-logs/2025/10/22/vertical-slice-instructions-20251022/conversation.md"
 source: "johnmillerATcodemag-com"
-applyTo: "**/*.{cs,ts,js,py,java,go,rb}"
+applyTo: "**/*.{cs,ts,tsx,js,jsx,py,java,go,rb}"
+description: "Use when implementing or reviewing an end-to-end feature slice, including React components, API behavior, persistence, and regression coverage."
+revisions:
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
+    change: "Included React files and required evidence for relevant failure/lifecycle scenarios before completion."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
 ---
 
 # Vertical Slice Architecture Instructions
@@ -1377,6 +1384,7 @@ public class RegisterUserHandler
 
 Before considering a feature complete:
 
+- [ ] Applicable dependency-failure, async draft, returning-browser, retry, capture-safety, and test-isolation scenarios have named checks and observed results; exclusions are justified.
 - [ ] Feature organized in dedicated folder under `/Features`
 - [ ] Command/Query object created with clear naming
 - [ ] Handler implemented with focused logic

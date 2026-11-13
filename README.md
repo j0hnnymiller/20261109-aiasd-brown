@@ -14,6 +14,11 @@ total_duration: "00:02:44"
 ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
 source: "user request; architecture documentation index update"
 revisions:
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
+    change: "Indexed review-driven generation safeguards and conditional application CI for the replacement Slice 1 implementation."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "7c5afae0-9dc2-465f-a19e-58cc8812f033"
     model: "OpenAI/gpt-6.1-sol@unknown"
     operator: "jMM-at-CODETraining"
@@ -94,6 +99,12 @@ This repository contains an approved product requirements specification for a ta
 - [ASP.NET Core Instructions](.github/instructions/aspnet-core.instructions.md) - Backend guidance for modular boundaries, device authorization, workspace isolation, and explicit errors.
 - [PostgreSQL Instructions](.github/instructions/postgresql.instructions.md) - Database guidance for workspace integrity, transactions, concurrency, and restore safeguards.
 - [Architecture Design Skill](.github/skills/architecture-design/SKILL.md) - Requirements-grounded architecture workflow with semantically colored Mermaid diagrams and data flow diagrams for principal data exchanges.
+- [Copilot Implementation Entry Point](.github/copilot-instructions.md) - Loads the applicable stack and slice guidance and requires failure/lifecycle regression evidence.
+- [Slice Implementation Skill](.github/skills/implement-vertical-slice/SKILL.md) - Bounded implementation with acceptance checks, a failure/lifecycle matrix, and safe test infrastructure.
+- [TDD Instructions](.github/instructions/test-driven-development.instructions.md), [Vertical-Slice Instructions](.github/instructions/vertical-slice-implementation.instructions.md), and [Specification Instructions](.github/instructions/implementation-specifications.instructions.md) - React-aware discovery, risk-driven regression checks, and explicit verification requirements.
+- [Slice Validation Workflow](.github/workflows/slice-validation.yml) - Explicit planning-only result until application files exist; then requires API, frontend, and Chromium checks using disposable PostgreSQL databases without artifact uploads. The replacement implementation must supply the documented manifests, npm scripts, and Chromium project.
+
+The stack and TDD instructions require sanitized exception responses in all environments, no credential-bearing test captures, isolated test-owned servers, pending-save draft protection, actionable prerequisite retries, and missing-CSRF acquisition for returning devices. These safeguards address review feedback from the superseded Slice 1 PR; the unmerged application commits are not part of this baseline.
 
 Milestone 1 (Product Readiness) is accepted. The MVP has private individual task spaces with no required accounts. The requester owns product acceptance and release decisions; the plan records the approved pilot measures and deferred account-specific questions.
 

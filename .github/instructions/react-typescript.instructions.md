@@ -22,6 +22,11 @@ owner: "Development Team"
 reviewedDate: "2026-11-12"
 nextReview: "2027-02-12"
 revisions:
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
+    change: "Added pending-save draft ownership, actionable dependency retries, and returning-device CSRF initialization rules."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
     date: "2026-11-12"
     change: "Recorded requester selection of React 19, TypeScript 5.9, Node.js LTS, Vite, Vitest, Testing Library, and Playwright."
@@ -57,6 +62,9 @@ Apply these rules to the task-manager browser interface. The selected baseline i
 - Coalesce duplicate focus/visibility refresh triggers. Prevent older refresh or mutation responses from overwriting newer confirmed state.
 - Preserve drafts during refresh. On refresh failure, retain the previous view and show a clear stale/error state; never replace it with an empty list that implies success.
 - On save failure, preserve user input and explain the failure. Show “Saved” only after server confirmation; represent ambiguous outcomes as ambiguous, not as definite failure or success.
+- Capture the submitted draft before awaiting a mutation. Either disable all draft editing while saving or clear fields only if they still represent the submitted draft; never erase newer unsaved edits after an earlier request succeeds. Verify the chosen policy with a deferred response and attempted mid-save edits, not only an immediately resolved mock.
+- Every recoverable loading failure must expose an enabled action that retries the failed operation without a page reload. A failed prerequisite request, such as supported time zones, must not leave setup disabled with only a message to "try again." Test failure, retry, and successful continuation while preserving valid input.
+- Acquire CSRF tokens through the shared mutation boundary rather than assuming onboarding initialized them. When the CSRF cookie is absent, obtain a fresh token before sending the mutation and surface acquisition failures explicitly. Verify a returning device with a valid persistent device cookie and no CSRF cookie. Do not weaken Origin/CSRF checks or blindly replay writes; preserve the operation's idempotency key.
 - Handle validation, unauthenticated access, unavailable resources, version conflicts, rate limits, and service failures as distinct user-visible states. Provide pairing or recovery guidance for authentication failure; do not silently create a new workspace.
 - Make task deletion explicit and immediate after confirmation. Do not add undo, trash, list removal, workspace deletion, or other excluded product behavior.
 
@@ -73,6 +81,7 @@ Apply these rules to the task-manager browser interface. The selected baseline i
 - [ ] Verify keyboard and screen-reader access for task, list, pairing, and recovery flows.
 - [ ] Verify refresh failure preserves the previous view and unsaved drafts.
 - [ ] Verify stale responses cannot overwrite newer edits and conflicts retain the user's draft.
+- [ ] Verify pending-save edits are prevented or preserved after success, prerequisite failures have working retries, and returning-device writes acquire missing CSRF state.
 - [ ] Verify no polling, hidden offline writes, sensitive browser persistence, or unauthorized workspace access is introduced.
 - [ ] Verify date-only due-date behavior across browser time zones and workspace-zone boundaries.
 - [ ] Verify excluded product capabilities are not exposed.

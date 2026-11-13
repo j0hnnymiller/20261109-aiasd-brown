@@ -20,6 +20,12 @@ task_durations:
 total_duration: "00:02:23"
 ai_log: "ai-logs/2026/10/29/implementation-specifications-20261029-0acb8bc1/conversation.md"
 source: "user"
+revisions:
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
+    change: "Required a failure/lifecycle verification matrix and explicit test-service and sensitive-artifact boundaries."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
 ---
 
 # Implementation Specification Instructions
@@ -60,6 +66,12 @@ Separate the durable description of **what to implement** from the reusable work
 7. **Showcase and completion:** Reproducible human-facing demonstration steps and expected observations; the evidence required for acceptance, known risks, and the next dependency or handoff. Keep planned checks distinct from execution evidence.
 
 Optional: Add diagrams, decision records, or supporting tables only when they clarify the slice. Do not prescribe an architecture, framework, or dependency without requirements and repository evidence.
+
+### Failure and lifecycle verification matrix
+
+Include a compact matrix mapping each applicable scenario to an observable outcome and a named planned test/check: dependency failure, delayed/out-of-order responses, draft edits during a save, returning browsers with independently expired cookies, recovery through an actual retry control, secret-bearing captures, and accidental reuse of development services. Mark non-applicable scenarios with a reason. Distinguish plans from execution evidence.
+
+Specify test database/server ownership, safe configuration checks, and capture/retention policy. Include real transport coverage where UI mocks would hide cookie or HTTP behavior. Do not mark the slice implemented solely because happy paths or coverage targets pass.
 
 ## Authoring and implementation handoff
 

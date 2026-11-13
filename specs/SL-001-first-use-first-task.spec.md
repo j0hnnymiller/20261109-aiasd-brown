@@ -13,6 +13,11 @@ total_duration: "00:08:10"
 ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
 source: "user request; approved requirements, architecture, and implementation plan"
 revisions:
+  - chat_id: "18e57cc1-aaa4-44b2-8160-ff185803a1f9"
+    model: "unknown/unknown@unknown"
+    date: "2026-11-13"
+    change: "Added review-driven failure/lifecycle checks and CI handoff requirements for a replacement implementation from main."
+    ai_log: "ai-logs/2026/11/13/18e57cc1-aaa4-44b2-8160-ff185803a1f9/conversation.md"
   - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
     model: "unknown/unknown@unknown"
     operator: "jMM-at-CODETraining"
@@ -147,6 +152,27 @@ There is no application or test project in the repository yet, so executable com
 | AC-009 | Proposed keyboard-only and assistive-technology review of first use, time-zone confirmation, task form, validation, and status announcements. | Manual; exact browser/tooling TBD. | All workflow actions and outcomes are perceivable and operable without color-only cues. |
 
 These are planned checks, not execution evidence. Do not substitute mocks for PostgreSQL-backed workspace isolation, transaction, date-only persistence, or retry checks.
+
+### Failure and lifecycle verification matrix
+
+The superseded PR 1 implementation was not merged. The replacement must start from `main` and verify the original acceptance criteria plus these concrete regression scenarios. Names below identify required planned checks, not existing tests or passing results.
+
+| Planned check | Scenario and observable outcome | Acceptance linkage |
+|---|---|---|
+| `UnexpectedFailureIsSanitizedInEveryEnvironment` | Inject a request-time database failure in Development and Production. Return generic Problem Details without stack traces, raw credential values, request headers, or sensitive diagnostics. | AC-003, AC-007 |
+| `CredentialFlowsDoNotRetainSensitiveCaptures` | Inspect capture configuration and permitted failure output. Credential-bearing flows retain no traces, screenshots, videos, HAR, storage-state exports, or secret-bearing attachments/assertion output. Do not persist secrets as test evidence. | AC-003 |
+| `BrowserTestsOwnTheirServerAndDatabase` | Run with the ordinary development server already listening; E2E starts a fresh API using a separate E2E database on dedicated ports and leaves development data untouched. Occupied test ports and missing/unsafe test configuration fail before mutations. | AC-001, AC-007 |
+| `PendingSaveCannotEraseNewerDraft` | Hold the save response pending, then attempt to change the fields. Either editing is disabled or newer edits survive the earlier successful response. Only the submitted task is confirmed. Also test delayed/out-of-order refreshes cannot replace newer confirmed state. | AC-004, AC-007, AC-008 |
+| `TimeZoneLoadFailureCanBeRetried` | Fail supported-zone loading, activate an accessible retry control, then succeed and complete setup without reloading the page or losing valid input. | AC-002, AC-007, AC-009 |
+| `ReturningDeviceAcquiresMissingCsrfBeforeMutation` | Preserve a valid device cookie but remove the CSRF cookie. The real API client obtains fresh CSRF state before a task write; the write succeeds with normal Origin/CSRF checks. Token-acquisition failure preserves the draft and reports an error without a mutation. | AC-003, AC-004, AC-007 |
+
+No scenario above is excluded for Slice 1. Use controlled responses for UI races, real transport coverage below mocked component boundaries for cookies/headers, and PostgreSQL for persistence/isolation.
+
+### CI handoff
+
+The [Slice validation workflow](../.github/workflows/slice-validation.yml) reports the current planning-only baseline explicitly. The replacement must provide `TaskManager.sln`, `global.json`, API and API-test projects under `src` and `tests`, and the frontend under `web` with a committed npm lockfile. Provide npm scripts `test`, `lint`, `build`, and `test:e2e`, browser tests under `web/e2e`, and a Playwright project named `chromium`.
+
+The workflow runs `dotnet test TaskManager.sln --configuration Release` from the root with `TASK_MANAGER_TEST_CONNECTION`, then `npm ci`, `npm run test`, `npm run lint`, `npm run build`, and `npm run test:e2e -- --project=chromium --trace=off --reporter=line` from `web`. Browser tests use `ConnectionStrings__TaskManager` against a separate E2E database. Align fresh test-server configuration with those variables; reject unsafe/missing configuration and occupied test ports. Disable all sensitive captures in test configuration, not just the command line. These are required implementation interfaces; no application execution is claimed on the planning-only baseline.
 
 ## Showcase and completion
 
