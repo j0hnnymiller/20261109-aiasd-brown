@@ -27,6 +27,19 @@ revisions:
     source: "user request and decision-form responses"
     change: "Recorded requester decisions and acceptance of Milestone 1."
     ai_log: "ai-logs/2026/11/12/5d5e4cc3-6034-4b34-9193-397eba0fac7a/conversation.md"
+  - chat_id: "7c5afae0-9dc2-465f-a19e-58cc8812f033"
+    model: "OpenAI/gpt-6.1-sol@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "help me resolve the open decisions"
+    started: "2026-11-12T20:52:34-08:00"
+    ended: "2026-11-12T20:55:39-08:00"
+    task_durations:
+      - task: "Aligning delivery acceptance with confirmed decisions"
+        duration: "00:03:05"
+    total_duration: "00:03:05"
+    source: "user request and six decision-form responses"
+    change: "Applied approved task/access/calendar refinements to acceptance, pilot measurement and delivery dependencies without inventing estimates."
+    ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
 ---
 
 # Task Manager MVP Project Plan
@@ -42,9 +55,17 @@ This is a product delivery plan. It does not select technologies, define archite
 
 ## MVP Scope
 
-The MVP includes the approved requirements TM-01 through TM-09: task creation and editing; named lists; active and completed task views; completion and reopening; text search; filtering and ordering; calendar-date due status; and task removal.
+The MVP includes the approved requirements TM-01 through TM-13: task creation and editing; named lists; active and completed task views; completion and reopening; title search; filtering and ordering; calendar-date due status; task removal; and subsequently approved cross-device access, pairing/revocation, recovery, and configurable task-space time zone.
 
 Reminders and recurring tasks are candidates for a later release and are excluded from this MVP. Team collaboration, task assignment, comments, attachments, time tracking, integrations, and billing are also excluded.
+
+### Follow-up Decision Impact
+
+On 2026-11-12 the requester approved the [architecture](task-manager-architecture.md) and resolved product behavior through decision forms. The [requirements' follow-up decisions](task-manager-requirements.md#follow-up-decisions-confirmed-on-2026-11-12) govern required named lists with a default Tasks list, Low/Medium/High/unset priority, title-only literal search, ordering, refresh on use, access expiry and recovery, calendar behavior, and immediate live task deletion with no undo.
+
+List removal and whole-task-space deletion are deferred. No automatic inactive-task-space deletion runs during the pilot; review this before broader release. Backups expire within 30 days, and deleted tasks must not reappear on restoration.
+
+The requester owns pilot operations and support, with best-effort availability and no numerical uptime SLA. Stack, hosting, budget, workload, performance targets, recovery objectives, and numeric abuse limits remain deferred as described in the architecture. This introduces access/time-zone acceptance work; effort and schedule impact cannot be estimated from the supplied context. The accepted Milestone 1 history below is preserved; these are later refinements, not retroactive Milestone 1 decisions.
 
 ## Delivery Sequence
 
@@ -82,32 +103,36 @@ Reminders and recurring tasks are candidates for a later release and are exclude
 
 ### Milestone 2: Capture and Organize Tasks
 
-**Requirements:** TM-01, TM-03, TM-05.
+**Requirements:** TM-01, TM-03, TM-05, TM-10, TM-11, TM-12.
 
 **Outcome:** An individual can create and edit tasks and organize them in named lists.
 
 **Acceptance criteria:**
 
-- A task with a title can be created; description, calendar due date, and priority are optional.
+- A task with a title can be created in a same-space named list; the default Tasks list is available without separate setup. Description, calendar due date, and approved priority values remain optional.
 - Saving without a title is rejected and the user is told what information is missing.
 - A user can update task details, including a date-only due date.
 - A user can move a task between named lists and see it under the selected list.
+- Named list creation rejects empty and case-insensitive duplicate trimmed names. There is no unfiled mode or list removal.
+- Pair another device, expire/revoke access, and recover the same task space using the approved lifetimes and revoke-and-rotate recovery experience.
 
 **Dependency:** Milestone 1 is complete. Its product decisions apply to this milestone; implementation authorization remains separate.
 
 ### Milestone 3: Find, Act On, and Track Tasks
 
-**Requirements:** TM-02, TM-04, TM-06, TM-07, TM-08, TM-09.
+**Requirements:** TM-02, TM-04, TM-06, TM-07, TM-08, TM-09, TM-13.
 
 **Outcome:** An individual can understand task state, locate relevant work, and keep task progress current.
 
 **Acceptance criteria:**
 
 - Active and completed tasks are distinguishable; users can complete and reopen tasks.
-- Text search and the approved state, list, priority, and due-date filters return matching tasks; clearing criteria restores the full task view.
+- Title-only case-insensitive literal search and selected state, list, priority, and due-date filters combine with AND; clearing criteria restores the full task view.
 - Users can order tasks by due date, priority, or creation date.
 - Incomplete tasks are identified as upcoming, due today, or past due from their calendar due date; completed tasks are not presented as needing completion.
 - A confirmed removal removes the task from the user's active and completed views; cancellation leaves it unchanged.
+- Due status uses the shared configurable task-space time zone; completion/reopening maintains the current completion evidence for snapshot pilot measurement.
+- Approved ordering includes undated/unset-last rules and stable tie-breaking. Confirmed task removal has no trash or undo.
 
 **Dependency:** Milestone 2 provides tasks and named lists for these workflows.
 
@@ -117,7 +142,8 @@ Reminders and recurring tasks are candidates for a later release and are exclude
 
 **Activities:**
 
-- Conduct an acceptance walkthrough covering TM-01 through TM-09 with representative individual users.
+- Conduct an acceptance walkthrough covering TM-01 through TM-13 with representative individual users.
+- Verify protected backup retention, deletion-ledger reapplication, and restoration before pilot launch; resolve the remaining hosting/operational launch dependencies recorded in the architecture.
 - Record unmet criteria, usability issues, and release-blocking product decisions; resolve blockers before release.
 - If stakeholders approve, release to a limited group of individual users first, then review feedback and agreed success measures before broader availability.
 
@@ -150,6 +176,8 @@ The requester approved a 30-day limited pilot with participant walkthroughs and 
 | Confidence          | Confidence in keeping track of personal commitments, rated from 1 (not confident) to 5 (very confident) at pilot start and end. | The same brief survey question at both points. |
 
 These are baseline measurements, not approved performance targets. Numeric targets will be set after baseline review and are excluded from release decisions until approved. Where no observations are available, report the measure as unavailable, not as zero.
+
+The approved on-time measure is a walkthrough snapshot: the denominator is currently available tasks whose current due dates fall within the pilot period; the numerator is those currently complete on or before that due date based on their recorded completion calendar date. Reopened tasks are incomplete; deleted tasks are unavailable. Disclose that historical due-date/completion changes are not reconstructed.
 
 ## Plan Boundaries
 

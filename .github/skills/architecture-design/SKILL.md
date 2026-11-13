@@ -3,16 +3,18 @@ name: architecture-design
 description: "Create requirements-grounded system architecture designs covering components, data flows, security, deployment, technology choices, and implementation roadmaps. Use when designing a new system or reshaping an existing architecture; identifies missing constraints and labels recommendations and assumptions explicitly."
 metadata:
   ai_generated: "true"
-  model: "anthropic/claude-3.5-sonnet@2024-10-22"
-  operator: "johnmillerATcodemag-com"
-  chat_id: "5f3c21d2-9cc6-4db3-b0dc-dd4ce14e99f7"
-  prompt: "continue"
-  started: "2026-09-29T21:44:42Z"
-  ended: "2026-09-29T21:44:57Z"
-  task_durations: "skill conversion and validation: 00:00:15"
-  total_duration: "00:00:15"
-  ai_log: "ai-logs/2026/09/29/5f3c21d2-9cc6-4db3-b0dc-dd4ce14e99f7/conversation.md"
-  source: ".github/prompts/architecture-design.prompt.md"
+  model: "OpenAI/gpt-6.1-sol@unknown"
+  operator: "jMM-at-CODETraining"
+  chat_id: "7c5afae0-9dc2-465f-a19e-58cc8812f033"
+  prompt: "update the architecture design skill to create mermaid data flow diagrams for data flows. update the architecture spec"
+  started: "2026-11-12T20:36:26-08:00"
+  ended: "2026-11-12T20:37:51-08:00"
+  task_durations: "Data flow diagram guidance and specification update: 00:01:25"
+  total_duration: "00:01:25"
+  ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
+  source: "user request; .github/instructions/mermaid.instructions.md"
+  original_chat_id: "5f3c21d2-9cc6-4db3-b0dc-dd4ce14e99f7"
+  original_source: ".github/prompts/architecture-design.prompt.md"
 ---
 
 # Comprehensive System Architecture Design
@@ -23,24 +25,25 @@ Analyze the user's requirements and design a system architecture that makes its 
 
 1. **Clarify scope and requirements.** Identify functional needs, quality attributes, constraints, success criteria, and known current-state context. Ask concise questions when missing answers would materially change the design. Otherwise proceed with clearly stated assumptions.
 2. **Assess the current state.** For brownfield work, review relevant systems, technologies, integrations, technical debt, team expertise, and resource constraints. Distinguish observed evidence from supplied claims and unknowns.
-3. **Define architecture boundaries.** State system scope, actors, external dependencies, trust boundaries, and major data flows.
+3. **Define architecture boundaries.** State system scope, actors, external dependencies, trust boundaries, and major data flows. Create Mermaid data flow diagrams for the documented principal data flows.
 4. **Design components and interfaces.** Describe components, responsibilities, APIs or protocols, persistence, caching, and integration approaches. Avoid unnecessary complexity and specify alternatives where a requirement is unresolved.
 5. **Evaluate patterns and quality attributes.** Explain pattern fit and trade-offs for scalability, maintainability, security, observability, resilience, and cost efficiency. Do not treat any principle as an unconditional design rule.
 6. **Cover security and deployment.** Describe threat considerations, authentication/authorization, data protection, compliance questions, environments, runtime infrastructure, monitoring, logging, and recovery needs. Treat regulatory applicability as unconfirmed unless the user provides it.
 7. **Recommend technologies carefully.** Tie choices to stated constraints and required capabilities. If current product features, prices, or support status are unknown, provide selection criteria instead of asserting current vendor facts.
 8. **Create a phased roadmap.** Identify implementation phases, dependencies, validation criteria, risks, and success measures. Use TBD for unsupported owners, dates, costs, or performance targets.
 9. **Summarize assumptions and open decisions.** List unknowns that could materially change the architecture and the evidence needed to resolve them.
+10. **Validate diagrams.** Use Mermaid with semantic coloring for all architecture diagrams, not ASCII art or diagrams in plain-text code blocks. Follow the [Mermaid authoring instructions](../../instructions/mermaid.instructions.md), including target-renderer validation; report any unavailable rendering checks explicitly. This skill requires semantic coloring even though the general instructions make color optional.
 
 ## Output Format
 
 ### Architecture overview
-System boundaries, actors, external integrations, core principles, and a high-level diagram when useful. Use Mermaid for diagrams and keep labels tied to described components.
+System boundaries, actors, external integrations, core principles, and a high-level Mermaid diagram with semantic coloring. Use a fenced `mermaid` block in Markdown, never a plain-text or ASCII architecture diagram. Keep labels tied to described components.
 
 ### Requirements and constraints
 Functional requirements, quality attributes, technical/business/regulatory/organizational constraints, success criteria, and assumptions.
 
 ### Component design
-Components, responsibilities, APIs/protocols, data stores, persistence, caching, and key data flows.
+Components, responsibilities, APIs/protocols, data stores, persistence, caching, and key data flows illustrated with Mermaid data flow diagrams.
 
 ### Architectural patterns
 Selected patterns, fit, trade-offs, complementary patterns, and anti-patterns to avoid.
@@ -62,6 +65,30 @@ Phases, dependencies, risks, validation gates, success measures, and any known r
 
 ### Assumptions and open questions
 List unresolved requirements and decisions that could change the design.
+
+## Diagram Format
+
+- Use Mermaid flowcharts for system/component boundaries, data flow diagrams for data movement, sequence diagrams for interaction timing, and ER diagrams for data relationships. Sequence diagrams and numbered steps may supplement, but must not replace, data flow diagrams for principal data flows.
+- Keep explanatory prose and tables; Mermaid replaces text-based diagrams, not the written specification.
+- Keep diagrams focused and consistent with the documented design. Do not invent components or relationships to fill a diagram.
+- If Mermaid rendering is unavailable, retain the Mermaid source and disclose the limitation rather than substituting an ASCII diagram.
+
+### Data flow diagrams
+
+- Implement data flow diagrams using Mermaid `flowchart` syntax; do not invent a `dfd` diagram directive.
+- Show external entities as labeled rectangles, transforming processes as rounded nodes with verb phrases, and persistent data stores as cylinders. Use consistent semantic entity/process/store colors and explain the notation.
+- Label every directed edge with the data exchanged (for example, task changes, record versions, or credential verifiers), not merely a protocol, action, or control-flow outcome. Show relevant inputs, outputs, reads, and writes.
+- Route stored data through processes; do not connect entities directly to stores or stores directly to each other. Use separate arrows when request and response data differ.
+- Identify the system/trust boundary in the diagram or adjacent prose. Keep diagrams focused on documented behavior and preserve interface data when decomposing a larger flow.
+- Cover each principal flow, including synchronization reads and significant credential flows. Retain prose for sequencing, transactions, error handling, and unresolved choices; a data flow diagram alone does not establish those guarantees.
+
+### Semantic coloring
+
+- Map colors to architectural roles or outcomes, never node order or decoration. Use the repository's semantic palette for decisions, success, warnings/retries, failures/rollback, and external systems when those roles occur; keep ordinary elements neutral.
+- For component roles not covered by that palette, define a small, labeled mapping (for example, client, application, and data store). Reuse each role's meaning and colors across related diagrams and include a legend or adjacent explanation.
+- Use reusable `classDef`/`class` roles where supported. For other diagram types, use styling supported by the target renderer; do not copy flowchart-only syntax into sequence or ER diagrams. If semantic styling is unsupported, disclose the limitation and retain explicit role labels rather than emitting invalid syntax.
+- Set fill, stroke, and text colors together. Verify at least 4.5:1 normal-text contrast against its fill, and check light/dark themes and exports where relevant.
+- Preserve meaning through labels, shapes, or branch text, not color alone. Inspect rendered labels, edges, clipping, and layout; disclose unavailable rendering or accessibility checks.
 
 ## Design Principles
 
