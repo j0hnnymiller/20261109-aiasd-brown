@@ -93,7 +93,7 @@ This repository contains an approved product requirements specification for a ta
 - [Task Manager Web App Requirements](task-manager-requirements.md)
 - [Task Manager MVP Project Plan](task-manager-mvp-plan.md)
 - [Task Manager Implementation Plan: Vertical Slices](task-manager-implementation-plan.md)
-- [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Approved by the requester; implementation authorization remains separate.
+- [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Approved by the requester; replacement implementation separately authorized and assigned to Copilot in [issue 2](https://github.com/j0hnnymiller/20261109-aiasd-brown/issues/2). The superseded [PR 1](https://github.com/j0hnnymiller/20261109-aiasd-brown/pull/1) was closed without merging; implementation and acceptance remain incomplete.
 - [Task Manager MVP Architecture Specification](task-manager-architecture.md) - Requester-approved hosted architecture with React/TypeScript, ASP.NET Core, and PostgreSQL; hosting and explicit open decisions remain unresolved.
 - [React and TypeScript Instructions](.github/instructions/react-typescript.instructions.md) - Frontend guidance for typed, accessible UI and explicit server refresh behavior.
 - [ASP.NET Core Instructions](.github/instructions/aspnet-core.instructions.md) - Backend guidance for modular boundaries, device authorization, workspace isolation, and explicit errors.
