@@ -39,14 +39,27 @@ revisions:
     ai_log: "ai-logs/2026/11/12/a0e9b1c3-fd41-4e9d-b025-2d81fe3ab4d2/conversation.md"
     source: "user approval"
     change: "Recorded requester approval of the Slice 1 specification; implementation authorization remains ungranted."
+  - chat_id: "a5e99ad6-f562-4860-a968-f64a1223ca97"
+    model: "unknown/unknown@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "implement slice 1"
+    started: "2026-11-12T21:49:40-08:00"
+    ended: "2026-11-12T22:37:35-08:00"
+    task_durations:
+      - task: "Implementing, verifying, and documenting Slice 1"
+        duration: "00:47:55"
+    total_duration: "00:47:55"
+    ai_log: "ai-logs/2026/11/12/a5e99ad6-f562-4860-a968-f64a1223ca97/conversation.md"
+    source: "User request and approved SL-001 specification"
+    change: "Recorded implementation authorization, verified acceptance evidence, and remaining coverage gaps."
 ---
 
 # SL-001: First Use and First Task
 
-- **Status:** Approved by requester on 2026-11-12
-- **Owner/reviewer:** Requester as Product Owner, Release Decision Owner, and technical reviewer; implementation owner unassigned
-- **Implementation authorization:** Not granted
-- **Approval:** The requester approved this specification on 2026-11-12. This approval does not authorize implementation.
+- **Status:** Implemented locally; automated verification completed on 2026-11-12; product acceptance pending
+- **Owner/reviewer:** Requester as Product Owner, Release Decision Owner, and technical reviewer; implementation completed by the Copilot SDK assistant
+- **Implementation authorization:** Granted by the requester's explicit "implement slice 1" request
+- **Approval:** The requester approved this specification on 2026-11-12. Implementation was separately authorized by the explicit request recorded in the execution log.
 - **Sources:** [Implementation plan, Slice 1](../task-manager-implementation-plan.md#slice-1-first-use-and-first-task); [product requirements](../task-manager-requirements.md); [approved architecture](../task-manager-architecture.md)
 
 ## Table of Contents
@@ -132,21 +145,21 @@ As an individual, I can start a private task space without registering an accoun
 
 ## Verification
 
-There is no application or test project in the repository yet, so executable commands and test paths cannot be specified honestly. Add focused unit/business-rule tests, PostgreSQL integration tests, API/user-flow checks, and accessibility checks after selecting the toolchain. Follow the repository's [TDD guidance](../.github/instructions/test-driven-development.instructions.md) and stack-specific instructions.
+Verification used isolated local PostgreSQL databases, the repository's pinned .NET and npm toolchains, and a real browser. The backend command requires `TASK_MANAGER_TEST_CONNECTION` to point to a dedicated test database; browser tests require `ConnectionStrings__TaskManager` to point to a separate E2E database. Follow the repository's [TDD guidance](../.github/instructions/test-driven-development.instructions.md) and stack-specific instructions.
 
-| Criterion | Planned test/check | Command and working directory | Expected result |
+| Criterion | Verification performed | Command and working directory | Result |
 |---|---|---|---|
-| AC-001 | Proposed workspace-creation integration test: inspect persisted workspace, default list, time zone, and credential verifiers; verify absence of account identity fields. | Not established; no test project. Run the selected focused integration-test command from the repository root after implementation planning. | Exactly one complete initialization is persisted; no partial records or account identity. |
-| AC-002 | Proposed time-zone integration/UI tests for a valid IANA value and the explicitly decided missing/invalid cases. | Not established; no test project. Repository root after toolchain selection. | Stored and displayed zone matches the approved behavior; no unapproved fallback. |
-| AC-003 | Proposed API/browser integration test for cookie flags and recovery-secret presentation; inspect persistence and captured logs/URLs/browser storage. | Not established; no test project. Repository root after toolchain selection. | Cookie and verifier requirements hold; raw secrets are absent from prohibited surfaces. |
-| AC-004 | Proposed task-create and scoped-read API integration test using a real isolated PostgreSQL test database; verify title and optional fields, date-only round trip, default-list association, and subsequent read. | Not established; no test project. Repository root after toolchain selection. | Server confirms and returns the persisted task under `Tasks` with no date shift. |
-| AC-005 | Proposed business-rule/API tests for absent, empty, and whitespace-only titles. | Not established; no test project. Repository root after toolchain selection. | Validation is actionable; persisted task count does not increase. |
-| AC-006 | Proposed authorization integration test using two independently created workspaces and absent, invalid, and cross-workspace credentials/identifiers. | Not established; no test project. Repository root after toolchain selection. | No cross-workspace data or existence signal is returned. |
-| AC-007 | Proposed transaction-failure, task-save-failure, and ambiguous-response/retry integration tests; verify draft preservation and no duplicate creates. | Not established; no test project. Repository root after toolchain selection. | No false success, partial initialization, dropped safe draft, or duplicate task. |
-| AC-008 | Proposed browser user-flow test: save, reload/open, return to visible view, manual refresh, and observe request activity during an idle interval. | Not established; no browser test project. Repository root after toolchain selection. | Saved task reappears on each approved trigger; no polling or push request occurs. |
-| AC-009 | Proposed keyboard-only and assistive-technology review of first use, time-zone confirmation, task form, validation, and status announcements. | Manual; exact browser/tooling TBD. | All workflow actions and outcomes are perceivable and operable without color-only cues. |
+| AC-001 | PostgreSQL integration test verifies atomic initialization, default list, selected zone, verifier digests, fixed expiry, and absence of account schema. | `dotnet test TaskManager.sln --no-restore` from repository root with the isolated test connection. | Passed. |
+| AC-002 | API exposes supported zones; browser walkthrough explicitly selects and displays `America/Los_Angeles`; component test simulates an unsupported detected zone and confirms explicit selection is required. | `dotnet test TaskManager.sln --no-restore`; `npm run test`; `npm run test:e2e` from `web`. | Passed. |
+| AC-003 | API test checks cookie flags and persisted SHA-256 verifiers; browser test checks the recovery secret is absent from local/session storage and the device cookie is HttpOnly. | `dotnet test TaskManager.sln --no-restore`; `npm run test:e2e` from `web`. | Passed. |
+| AC-004 | PostgreSQL API integration and real-browser flow verify server-confirmed task fields, default-list assignment, date-only value, and reload persistence. | `dotnet test TaskManager.sln --no-restore`; `npm run test:e2e` from `web`. | Passed. |
+| AC-005 | API and browser tests reject whitespace-only titles; component test verifies failed saves preserve the draft and do not claim success. | `dotnet test TaskManager.sln --no-restore`; `npm run test`; `npm run test:e2e` from `web`. | Passed. |
+| AC-006 | PostgreSQL API test checks unauthenticated reads and attempts a workspace query using another workspace's credential; no tasks are returned. | `dotnet test TaskManager.sln --no-restore` from repository root with the isolated test connection. | Passed. |
+| AC-007 | API tests verify workspace/task idempotency and conflicts; component tests verify retry-safe task drafts and explicit recovery-loss confirmation. | `dotnet test TaskManager.sln --no-restore`; `npm run test` from `web`. | Passed. |
+| AC-008 | Browser test verifies reload persistence, a focus-triggered refresh, and no extra task reads during observed idle intervals; component test covers manual refresh and stale-state messaging. | `npm run test:e2e`; `npm run test` from `web`. | Passed. |
+| AC-009 | Playwright drives first-use, time-zone selection, recovery acknowledgement, task entry, and save with keyboard navigation only; component tests verify accessible labels and status/error roles. | `npm run test:e2e`; `npm run test` from `web`. | Passed. A screen-reader-specific review was not performed. |
 
-These are planned checks, not execution evidence. Do not substitute mocks for PostgreSQL-backed workspace isolation, transaction, date-only persistence, or retry checks.
+Overall verification on 2026-11-12: all 4 PostgreSQL-backed API tests, all 6 frontend component tests, and all 3 Playwright browser tests passed. `npm run build`, `npm run lint`, and full `npm audit` also passed; the audit reported zero vulnerabilities.
 
 ## Showcase and completion
 
@@ -155,10 +168,10 @@ These are planned checks, not execution evidence. Do not substitute mocks for Po
 3. Reload or reopen the app and manually refresh; confirm the task appears with unchanged date and data. Submit a blank title and confirm actionable validation with no saved task.
 4. Run automated isolation and failure-path checks with a second test workspace; verify no secrets or task content appear in logs, URLs, telemetry, or browser storage.
 
-- **Approval evidence:** The requester approved this specification on 2026-11-12 after accepting technical reviewer responsibility. All nine acceptance criteria map to planned checks. No implementation or test execution is implied.
-- **Execution evidence:** Not run; specification only.
-- **Risks:** If page memory is lost before a retry completes, the initial workspace credentials cannot be recovered; an inaccessible workspace may remain, and a user-confirmed restart may create a separate workspace. Review this trade-off before implementation. Recovery flow response-loss handling remains an architecture-level decision for the later recovery slice.
-- **Next dependency/handoff:** Specification review and approval are complete. Pin compatible patch versions and configure local PostgreSQL/secrets during implementation planning. Only after separate implementation authorization, invoke the [implement-vertical-slice skill](../.github/skills/implement-vertical-slice/SKILL.md) with this specification path. Slice 2 and later slices remain out of scope.
+- **Approval evidence:** The requester approved this specification on 2026-11-12 and separately authorized implementation with the explicit "implement slice 1" request. Automated evidence is listed above; product acceptance remains with the requester.
+- **Execution evidence:** Slice 1 is implemented and verified locally against isolated PostgreSQL databases. Hosting and pilot deployment were not part of this work.
+- **Risks and remaining checks:** If page memory is lost before a workspace-create retry completes, its credentials cannot be recovered and an inaccessible workspace may remain. A screen-reader-specific review was not performed. Numeric abuse thresholds are deferred and must be documented and tested before pilot launch. Recovery response-loss handling belongs to the later recovery slice.
+- **Next dependency/handoff:** Review the showcase flow before product acceptance. Slice 2 and later slices remain separate work and were not started.
 
 ## Resolved decisions and remaining gates
 
@@ -172,10 +185,10 @@ The requester selected the following implementation baseline on 2026-11-12:
 
 The requester also selected browser-detected IANA zone with explicit user selection on failed detection; 256-bit random credentials with SHA-256 verifiers and the cookie/CSRF policy above; and same-page-memory retry with explicit recovery-loss handling. These decisions resolve Slice 1's previously open technical choices.
 
-1. **Technical review:** Complete. The requester approved this specification on 2026-11-12. Implementation authorization remains separate.
-2. **Exact versions and setup:** Pin supported patch versions and configure local PostgreSQL, secrets, and test infrastructure in the implementation proposal. Compatibility must be verified before coding; patch pinning is a setup prerequisite, not a product decision.
+1. **Technical review and implementation authorization:** Specification approved on 2026-11-12; implementation authorized separately by the requester's explicit "implement slice 1" request.
+2. **Exact versions and setup:** Pinned package versions, .NET SDK, local PostgreSQL, and isolated test databases are configured and verified for this local slice.
 3. **Abuse thresholds:** Endpoint-specific rate limiting is approved, but numeric thresholds remain deferred. This does not block local Slice 1 verification; thresholds must be documented and tested before pilot launch.
 
 ## Implementation handoff
 
-This approved specification defines one bounded slice and does not authorize implementation. After separate implementation authorization, invoke the repository's generic vertical-slice workflow with `specs/SL-001-first-use-first-task.spec.md`. The implementation workflow must propose its own bounded plan and wait for separate approval before editing code.
+The bounded Slice 1 implementation is complete. Do not infer authorization for later slices from this request; use their approved specifications and obtain any required implementation authorization before starting them.

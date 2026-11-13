@@ -1,0 +1,282 @@
+.shell {
+  width: min(100% - 2rem, 760px);
+  margin: 0 auto;
+  padding: clamp(2rem, 7vw, 5rem) 0;
+}
+
+.card,
+.task-card {
+  border: 1px solid #dfe5e2;
+  border-radius: 1.25rem;
+  background: #fff;
+  box-shadow: 0 1.5rem 4rem rgb(28 59 51 / 8%);
+}
+
+.card {
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+}
+
+.welcome-card {
+  margin-top: 8vh;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: #397367;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3 {
+  color: #18312d;
+  line-height: 1.15;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  letter-spacing: -0.04em;
+}
+
+h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.45rem;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+
+p {
+  line-height: 1.6;
+}
+
+.card > p:not(.eyebrow),
+.welcome-card > p:not(.eyebrow) {
+  max-width: 62ch;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  min-height: 2.85rem;
+  margin-top: 1.5rem;
+  padding: 0.65rem 1.1rem;
+  border: 1px solid #275c51;
+  border-radius: 0.65rem;
+  background: #275c51;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #1c493f;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #e2a840;
+  outline-offset: 3px;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.secondary-button {
+  border-color: #b7c8c2;
+  background: #f2f7f5;
+  color: #21483f;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: #e5f0ec;
+}
+
+.fine-print,
+.field-help,
+.optional {
+  color: #536660;
+  font-size: 0.9rem;
+}
+
+.fine-print {
+  margin: 0.5rem 0 0;
+}
+
+form {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.5rem;
+}
+
+label {
+  margin-top: 0.6rem;
+  color: #243d37;
+  font-weight: 700;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  min-height: 2.8rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #9aaba5;
+  border-radius: 0.55rem;
+  background: #fff;
+  color: #172d28;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.field-help {
+  margin: 0.1rem 0;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field-row > div {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.error {
+  margin: 0.5rem 0;
+  color: #8e2a23;
+  font-weight: 600;
+}
+
+.secret {
+  margin: 1.25rem 0 0;
+  padding: 1rem;
+  border: 1px dashed #8da49b;
+  border-radius: 0.65rem;
+  background: #f4f8f6;
+  overflow-wrap: anywhere;
+}
+
+.secret code {
+  color: #18312d;
+  font-size: 1rem;
+  user-select: all;
+}
+
+.app-shell {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.app-header,
+.list-heading,
+.task-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-header h1 {
+  margin: 0;
+}
+
+.app-header .secondary-button {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.task-entry {
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+.task-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.list-heading h2 {
+  margin: 0;
+}
+
+.task-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.task-card {
+  padding: 1.1rem 1.25rem;
+  box-shadow: none;
+}
+
+.task-card p {
+  margin: 0.6rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+.priority {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: #e8f1ed;
+  color: #245549;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.empty-state {
+  padding: 1.5rem;
+  border-radius: 0.8rem;
+  background: #f2f7f5;
+  color: #536660;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 540px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .app-header .secondary-button {
+    width: 100%;
+  }
+}
