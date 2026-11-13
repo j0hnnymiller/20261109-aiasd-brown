@@ -40,6 +40,19 @@ revisions:
     ai_log: "ai-logs/2026/11/12/7c5afae0-9dc2-465f-a19e-58cc8812f033/conversation.md"
     source: "user stack-selection form"
     change: "Summarized the selected stack and retained hosting and operational deferrals."
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    model: "unknown/unknown@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "create instruction files for the tech stack"
+    started: "2026-11-12T21:03:43-08:00"
+    ended: "2026-11-12T21:08:49-08:00"
+    task_durations:
+      - task: "Creating stack instruction files and integration records"
+        duration: "00:05:06"
+    total_duration: "00:05:06"
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
+    source: "user request"
+    change: "Added workspace instructions for React/TypeScript, ASP.NET Core, and PostgreSQL and indexed them in the README."
 ---
 
 # Welcome
@@ -49,6 +62,9 @@ This repository contains an approved product requirements specification for a ta
 - [Task Manager Web App Requirements](task-manager-requirements.md)
 - [Task Manager MVP Project Plan](task-manager-mvp-plan.md)
 - [Task Manager MVP Architecture Specification](task-manager-architecture.md) - Requester-approved hosted architecture with React/TypeScript, ASP.NET Core, and PostgreSQL; hosting and explicit open decisions remain unresolved.
+- [React and TypeScript Instructions](.github/instructions/react-typescript.instructions.md) - Frontend guidance for typed, accessible UI and explicit server refresh behavior.
+- [ASP.NET Core Instructions](.github/instructions/aspnet-core.instructions.md) - Backend guidance for modular boundaries, device authorization, workspace isolation, and explicit errors.
+- [PostgreSQL Instructions](.github/instructions/postgresql.instructions.md) - Database guidance for workspace integrity, transactions, concurrency, and restore safeguards.
 - [Architecture Design Skill](.github/skills/architecture-design/SKILL.md) - Requirements-grounded architecture workflow with semantically colored Mermaid diagrams and data flow diagrams for principal data exchanges.
 
 Milestone 1 (Product Readiness) is accepted. The MVP has private individual task spaces with no required accounts. The requester owns product acceptance and release decisions; the plan records the approved pilot measures and deferred account-specific questions.
