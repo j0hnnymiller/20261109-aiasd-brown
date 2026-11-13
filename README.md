@@ -53,6 +53,19 @@ revisions:
     ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
     source: "user request"
     change: "Added workspace instructions for React/TypeScript, ASP.NET Core, and PostgreSQL and indexed them in the README."
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    model: "unknown/unknown@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "create an implementation spec for slice 1"
+    started: "2026-11-12T21:20:48-08:00"
+    ended: "2026-11-12T21:28:58-08:00"
+    task_durations:
+      - task: "Drafting and validating the Slice 1 implementation specification"
+        duration: "00:08:10"
+    total_duration: "00:08:10"
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
+    source: "user request"
+    change: "Created a blocked draft implementation specification for Slice 1 and linked it from the implementation plan."
 ---
 
 # Welcome
@@ -62,6 +75,7 @@ This repository contains an approved product requirements specification for a ta
 - [Task Manager Web App Requirements](task-manager-requirements.md)
 - [Task Manager MVP Project Plan](task-manager-mvp-plan.md)
 - [Task Manager Implementation Plan: Vertical Slices](task-manager-implementation-plan.md)
+- [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Blocked draft implementation specification for Slice 1; unresolved prerequisites and implementation authorization are explicit.
 - [Task Manager MVP Architecture Specification](task-manager-architecture.md) - Requester-approved hosted architecture with React/TypeScript, ASP.NET Core, and PostgreSQL; hosting and explicit open decisions remain unresolved.
 - [React and TypeScript Instructions](.github/instructions/react-typescript.instructions.md) - Frontend guidance for typed, accessible UI and explicit server refresh behavior.
 - [ASP.NET Core Instructions](.github/instructions/aspnet-core.instructions.md) - Backend guidance for modular boundaries, device authorization, workspace isolation, and explicit errors.

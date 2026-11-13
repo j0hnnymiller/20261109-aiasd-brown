@@ -13,6 +13,20 @@ task_durations:
 total_duration: "00:03:52"
 ai_log: "ai-logs/2026/11/12/5d5e4cc3-6034-4b34-9193-397eba0fac7a/conversation.md"
 source: "user request; approved product requirements and architecture"
+revisions:
+  - chat_id: "e9752f6f-5119-4a18-af86-2254b152ab42"
+    model: "unknown/unknown@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "create an implementation spec for slice 1"
+    started: "2026-11-12T21:20:48-08:00"
+    ended: "2026-11-12T21:28:58-08:00"
+    task_durations:
+      - task: "Drafting and validating the Slice 1 implementation specification"
+        duration: "00:08:10"
+    total_duration: "00:08:10"
+    ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
+    source: "user request"
+    change: "Linked the blocked draft implementation specification for Slice 1."
 ---
 
 # Task Manager Implementation Plan: Vertical Slices
@@ -52,6 +66,8 @@ This document sequences implementation work; it does not authorize development, 
 | Gate  | Pilot readiness                          | Verify the full MVP and operate the approved 30-day pilot.                          | TM-01 through TM-13        | Slices 1-7; hosting and operational decisions             |
 
 ## Slice 1: First Use and First Task
+
+**Implementation specification:** [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Draft blocked on unresolved implementation prerequisites; does not authorize implementation.
 
 **User story:** As an individual, I can start a private task space without registering an account and save and view my first task.
 
