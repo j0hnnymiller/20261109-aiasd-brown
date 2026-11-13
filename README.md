@@ -89,6 +89,19 @@ revisions:
     ai_log: "ai-logs/2026/11/12/e9752f6f-5119-4a18-af86-2254b152ab42/conversation.md"
     source: "user decision-form responses"
     change: "Updated architecture and stack guidance with selected Slice 1 technical decisions; specification is ready for review, not implementation."
+  - chat_id: "57462e40-b5b1-4a82-b799-a1135603145a"
+    model: "unknown/unknown@unknown"
+    operator: "jMM-at-CODETraining"
+    prompt: "create an implementation spec for slice 2"
+    started: "2026-11-13T07:51:44.293-08:00"
+    ended: "2026-11-13T08:00:04.874-08:00"
+    task_durations:
+      - task: "Drafting and validating the Slice 2 specification"
+        duration: "00:08:20"
+    total_duration: "00:08:20"
+    ai_log: "ai-logs/2026/11/13/57462e40-b5b1-4a82-b799-a1135603145a/conversation.md"
+    source: "user request"
+    change: "Added the draft Slice 2 specification to the repository documentation index."
 ---
 
 # Welcome
@@ -99,6 +112,7 @@ This repository contains an approved product requirements specification for a ta
 - [Task Manager MVP Project Plan](task-manager-mvp-plan.md)
 - [Task Manager Implementation Plan: Vertical Slices](task-manager-implementation-plan.md)
 - [SL-001: First Use and First Task](specs/SL-001-first-use-first-task.spec.md) - Approved by the requester; replacement implementation separately authorized and assigned to Copilot in [issue 2](https://github.com/j0hnnymiller/20261109-aiasd-brown/issues/2). The superseded [PR 1](https://github.com/j0hnnymiller/20261109-aiasd-brown/pull/1) was closed without merging; implementation and acceptance remain incomplete.
+- [SL-002: Edit and Organize Tasks](specs/SL-002-edit-and-organize-tasks.spec.md) - Draft for requester review; depends on accepted Slice 1 and does not authorize implementation.
 - [Task Manager MVP Architecture Specification](task-manager-architecture.md) - Requester-approved hosted architecture with React/TypeScript, ASP.NET Core, and PostgreSQL; hosting and explicit open decisions remain unresolved.
 - [React and TypeScript Instructions](.github/instructions/react-typescript.instructions.md) - Frontend guidance for typed, accessible UI and explicit server refresh behavior.
 - [ASP.NET Core Instructions](.github/instructions/aspnet-core.instructions.md) - Backend guidance for modular boundaries, device authorization, workspace isolation, and explicit errors.
